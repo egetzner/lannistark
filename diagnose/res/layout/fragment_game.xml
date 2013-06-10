@@ -5,36 +5,42 @@
     android:orientation="vertical">
     
     <!-- Game information -->
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="@drawable/background_black_left_top_right">
-	    <TextView
+        android:background="@color/black">
+   	    <TextView
 	        android:id="@+id/text_diagnoses"
-	        style="@style/text.white"
+	        style="@style/text.white.small"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:text="diagnoses: # / #" />
+	        android:layout_alignParentLeft="true"
+	        android:text="@string/fragment_game_text_num_diagnoses"
+	    />"
 	    <TextView
 	        android:id="@+id/text_tries"
-	        style="@style/text.white"
+	        style="@style/text.white.small"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:text="tries: #" />
+	        android:layout_toLeftOf="@+id/text_best"
+			android:text="@string/fragment_game_text_num_tries"
+	    />
 	    <TextView
 	        android:id="@+id/text_best"
-	        style="@style/text.white"
+	        style="@style/text.white.small"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:text="best: #" />
-	</LinearLayout>
+	        android:layout_alignParentRight="true"
+			android:text="@string/fragment_game_text_num_best"
+        />
+	</RelativeLayout>
 	
     <!-- constraint lists -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:baselineAligned="false"
         android:orientation="horizontal"
         >
         <!-- minimal conflicts -->
@@ -50,7 +56,8 @@
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:layout_gravity="center_horizontal"
-		        android:text="conflicts" />
+				android:text="@string/fragment_game_text_header_conflicts"
+		    />
     	    <ListView android:id="@+id/listview_minimalconflicts"
 		        android:layout_height="wrap_content"
 		        android:layout_width="match_parent">
@@ -70,7 +77,8 @@
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:layout_gravity="center_horizontal"
-		        android:text="diagnoses" />
+				android:text="@string/fragment_game_text_header_diagnoses"
+		    />
       	    <ListView android:id="@+id/listview_diagnoses"
 		        android:layout_height="wrap_content"
 		        android:layout_width="match_parent">
@@ -85,13 +93,21 @@
         android:background="@drawable/background_black_left_top_right"
         android:gravity="center">
        	<ImageView
-	       android:id="@+id/icon_navigation_cancel"
-	       android:contentDescription="@string/app_name"
-	       android:layout_width="wrap_content"
-	       android:layout_height="wrap_content"
-	       android:layout_centerVertical="true"
-	       android:layout_alignParentLeft="true"
-	       android:src="@drawable/navigation_cancel" />
+	        android:id="@+id/icon_navigation_cancel"
+	        android:contentDescription="@string/app_name"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_centerVertical="true"
+	        android:layout_alignParentLeft="true"
+	        android:src="@drawable/navigation_cancel" />
+       	<ImageView
+      	    android:contentDescription="@string/app_name"
+	    	android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+	    	android:layout_centerVertical="true"
+	    	android:layout_toRightOf="@+id/icon_navigation_cancel"
+	    	android:layout_marginRight="2dp"
+	    	android:src="@drawable/icon_curlyopen" />
         <GridView
 		    android:id="@+id/gridview_diagnose"
 		    android:layout_width="fill_parent" 
@@ -104,14 +120,22 @@
 		    android:gravity="center"
 		    android:layout_toRightOf="@+id/icon_navigation_cancel"
 		/>
+        <ImageView
+      	    android:contentDescription="@string/app_name"
+	    	android:layout_width="wrap_content"
+	    	android:layout_height="wrap_content"
+	    	android:layout_centerVertical="true"
+	    	android:layout_toLeftOf="@+id/icon_navigation_accept"
+	    	android:layout_marginLeft="2dp"
+	    	android:src="@drawable/icon_curlyclosed" />
    	    <ImageView
-	       android:id="@+id/icon_navigation_accept"
-	       android:contentDescription="@string/app_name"
-	       android:layout_width="wrap_content"
-	       android:layout_height="wrap_content"
-	       android:layout_alignParentRight="true"
-	       android:layout_centerVertical="true"
-	       android:src="@drawable/navigation_accept" />
+	        android:id="@+id/icon_navigation_accept"
+	        android:contentDescription="@string/app_name"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentRight="true"
+	        android:layout_centerVertical="true"
+	        android:src="@drawable/navigation_accept" />
     </RelativeLayout>
     
     <!-- Constraint pool -->

@@ -44,10 +44,17 @@ public class DiagnoseCalculator {
 					} else {
 						//for each constraint in the current conflictSet
 						for(Constraint constraint : conflictSet) {
-							// add new constraint to currentDiagnose
-							Set<Constraint> diagnose = new HashSet<Constraint>(currentDiagnose);
-							diagnose.add(constraint);
-							newDiagnoses.add(diagnose);
+							boolean exists = false;
+							for (Set<Constraint> nestedDiagnose : diagnoses) {
+								exists = exists || nestedDiagnose.contains(constraint);
+							}
+							//if current constraint does not yet exist in an existing diagnose
+							if (!exists) {
+								// add new constraint to currentDiagnose
+								Set<Constraint> diagnose = new HashSet<Constraint>(currentDiagnose);
+								diagnose.add(constraint);
+								newDiagnoses.add(diagnose);
+							} 
 						}
 					}
 				}
@@ -59,5 +66,13 @@ public class DiagnoseCalculator {
 	
 	public Set<Set<Constraint>> getDiagnoses() {
 		return diagnoses;
+	}
+
+	public boolean isDiagnose(Set<Constraint> diagnose) {
+		return diagnoses.contains(diagnose);
+	}
+
+	public int getNumberOfDiagnoses() {
+		return diagnoses.size();
 	}
 }

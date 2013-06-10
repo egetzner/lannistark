@@ -1,9 +1,9 @@
 package at.tugraz.ist.wv.diagnose.fragment;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 import at.tugraz.ist.wv.diagnose.R;
 import at.tugraz.ist.wv.diagnose.abstraction.Constraint;
@@ -29,8 +30,35 @@ public class GameFragment extends Fragment {
 	private ConstraintAdapter constraintAdapter;
 	
 	//constraint sets
-	Set<Set<Constraint>> conflictSet;
-	Set<Set<Constraint>> diagnoseSet;
+	private Set<Set<Constraint>> conflictSet;
+	private Set<Set<Constraint>> diagnoseSet;
+	
+	//gameplay
+	private DiagnoseCalculator diagnoseCalculator;
+	private int numTries;
+	private int numBest;
+	
+	//textviews
+	TextView textviewDiagnoses;
+	TextView textviewTries;
+	TextView textviewBest;
+	
+	//callback listener for activities
+    public interface OnGameCompletedListener {
+        public void onGameCompleted(int numTries);
+    }
+    
+    OnGameCompletedListener onGameCompletedListener;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+        	onGameCompletedListener = (OnGameCompletedListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement OnArticleSelectedListener");
+        }
+    }
 	
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -38,8 +66,13 @@ public class GameFragment extends Fragment {
     	// Inflate the layout for this fragment
         View layout = inflater.inflate(R.layout.fragment_game, container, false);
 
+        //bind text views
+        textviewDiagnoses = (TextView) layout.findViewById(R.id.text_diagnoses);
+        textviewTries = (TextView) layout.findViewById(R.id.text_tries);
+        textviewBest = (TextView) layout.findViewById(R.id.text_best);
         
         //handle input
+        	//handle input sets
         conflictSet = new HashSet<Set<Constraint>>();
         diagnoseSet = new HashSet<Set<Constraint>>();
         	//add dummy input
@@ -53,16 +86,21 @@ public class GameFragment extends Fragment {
         constraints.add(Constraint.CYAN);
         constraints.add(Constraint.MAGENTA);
         constraints.add(Constraint.WHITE);
-        conflictSet.add(constraints);
+        //conflictSet.add(constraints);
         constraints = new HashSet<Constraint>();
         constraints.add(Constraint.YELLOW);
         constraints.add(Constraint.GREEN);
         constraints.add(Constraint.WHITE);
         conflictSet.add(constraints);
+	    	//handle other input data
+	    numTries = 0;
+	    numBest = 0;
         
-        //test
-        DiagnoseCalculator diagnoseCalculator = new DiagnoseCalculator(conflictSet);
-        //diagnoseSet = diagnoseCalculator.getDiagnoses();
+        //process diagnoses
+        diagnoseCalculator = new DiagnoseCalculator(conflictSet);
+        
+        //show text information
+        updateTextInformation();
         
         //prepare set for conflict pool
         Set<Constraint> constraintPool = new HashSet<Constraint>();
@@ -127,13 +165,22 @@ public class GameFragment extends Fragment {
     }
     
     public void addDiagnose() {
+    	numTries++;
     	Set<Constraint> diagnose = new HashSet<Constraint>(diagnoseAdapter.getConstraints());
     	if (!diagnoseSet.contains(diagnose)) {
-    		diagnoseSet.add(diagnose);
-    		diagnoseListAdapter.addDiagnose(diagnoseAdapter.getConstraints());
+    		if (diagnoseCalculator.isDiagnose(diagnose)) {
+	    		diagnoseSet.add(diagnose);
+	    		diagnoseListAdapter.addDiagnose(diagnoseAdapter.getConstraints());
+	    		checkGameCompletion();
+    		} else {
+    			Toast.makeText(getActivity(), getActivity().getString(R.string.fragment_game_toast_no_diagnose), Toast.LENGTH_SHORT).show();
+    		}
+    	} else {
+    		Toast.makeText(getActivity(), getActivity().getString(R.string.fragment_game_toast_duplicate_diagnose), Toast.LENGTH_SHORT).show();
     	}
     	diagnoseAdapter.clear();
     	notifyAdapters();
+    	updateTextInformation();
     }
     
     private void notifyAdapters() {
@@ -142,5 +189,20 @@ public class GameFragment extends Fragment {
     	diagnoseAdapter.notifyDataSetChanged();
     	constraintAdapter.notifyDataSetChanged();
     }
+    
+    private void updateTextInformation() {
+    	textviewDiagnoses.setText(getActivity().getString(R.string.fragment_game_text_num_diagnoses) + diagnoseSet.size() + "/" + diagnoseCalculator.getNumberOfDiagnoses());
+    	textviewTries.setText(getActivity().getString(R.string.fragment_game_text_num_tries) + numTries);
+    	textviewBest.setText(getActivity().getString(R.string.fragment_game_text_num_best) + numBest);
+    }
+    
+    private void checkGameCompletion() {
+    	System.out.println(diagnoseSet.size() + " / " + diagnoseCalculator.getNumberOfDiagnoses());
+    	if (diagnoseSet.size() == diagnoseCalculator.getNumberOfDiagnoses())
+    		//game complete
+    		onGameCompletedListener.onGameCompleted(numTries);
+    }
+    
+
 
 }
