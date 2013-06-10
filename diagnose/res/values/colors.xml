@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+   <color name="opaque_red">#f00</color>
+   <color name="translucent_red">#80ff0000</color>
+	<color name="holo_purple">#0106001a</color>
+	<color name="solid_red">#fff00000</color>
+	<color name="white">#ffffff</color>
+	<color name="black">#000000</color>	
+	
+	<color name="highlight_card">#80ff0000</color>
+	
+	<color name="color_preloader_start">#000000</color>
+	<color name="color_preloader_center">#ffffff</color>
+	<color name="color_preloader_end">#000000</color>
+</resources>

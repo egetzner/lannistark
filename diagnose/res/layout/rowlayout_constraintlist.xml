@@ -1,0 +1,23 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" 
+    android:layout_gravity="center"
+    android:orientation="horizontal">
+    <ImageView
+     	android:contentDescription="@string/app_name"
+	    android:layout_width="10dp"
+	    android:layout_height="15dp"
+	    android:src="@drawable/navigation_previous_item" />
+    <LinearLayout
+        android:id="@+id/linearlayout_constraints"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+    </LinearLayout>
+    <ImageView
+     	android:contentDescription="@string/app_name"
+	    android:layout_width="10dp"
+	    android:layout_height="15dp"
+	    android:src="@drawable/navigation_next_item" />    
+</LinearLayout> 

@@ -1,0 +1,126 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" 
+    android:orientation="vertical">
+    
+    <!-- Game information -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@android:color/transparent">"
+	    <TextView
+	        android:id="@+id/text_diagnoses"
+	        style="@style/text.black"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="diagnoses: # / #" />
+	    <TextView
+	        android:id="@+id/text_tries"
+	        style="@style/text.black"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="tries: #" />
+	    <TextView
+	        android:id="@+id/text_best"
+	        style="@style/text.black"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="best: #" />
+	</LinearLayout>
+	
+    <!-- constraint lists -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        >
+        <!-- minimal conflicts -->
+        <LinearLayout
+	        android:layout_width="0dp"
+	        android:layout_height="match_parent"
+	        android:layout_weight="1"
+	        android:orientation="vertical"
+	        >
+       	    <TextView
+		        style="@style/text.black"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:text="here comes the conflicts" />
+    	    <ListView android:id="@+id/listview_minimalconflicts"
+		        android:layout_height="wrap_content"
+		        android:layout_width="match_parent">
+	    	</ListView>
+        </LinearLayout>
+        
+        <!-- diagnoses -->
+        <LinearLayout
+	        android:layout_width="0dp"
+	        android:layout_height="match_parent"
+	        android:layout_weight="1"
+	        android:orientation="vertical"
+	        >
+       	    <TextView
+		        style="@style/text.black"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:text="here comes the diagnoses" />
+      	    <ListView android:id="@+id/listview_diagnoses"
+		        android:layout_height="wrap_content"
+		        android:layout_width="match_parent">
+	    	</ListView>
+        </LinearLayout>
+    </LinearLayout>    
+    
+    <!-- Diagnose control -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/darker_gray"
+        android:gravity="center">
+       	<ImageView
+	       android:id="@+id/icon_navigation_cancel"
+	       android:contentDescription="@string/app_name"
+	       android:layout_width="wrap_content"
+	       android:layout_height="wrap_content"
+	       android:layout_centerVertical="true"
+	       android:layout_alignParentLeft="true"
+	       android:src="@drawable/navigation_cancel" />
+        <GridView
+		    android:id="@+id/gridview_diagnose"
+		    android:layout_width="fill_parent" 
+		    android:layout_height="wrap_content"
+		    android:columnWidth="24dp"
+		    android:numColumns="8"
+		    android:verticalSpacing="2dp"
+		    android:horizontalSpacing="2dp"
+		    android:stretchMode="none"
+		    android:gravity="center"
+		    android:layout_toRightOf="@+id/icon_navigation_cancel"
+		/>
+   	    <ImageView
+	       android:id="@+id/icon_navigation_accept"
+	       android:contentDescription="@string/app_name"
+	       android:layout_width="wrap_content"
+	       android:layout_height="wrap_content"
+	       android:layout_alignParentRight="true"
+	       android:layout_centerVertical="true"
+	       android:src="@drawable/navigation_accept" />
+    </RelativeLayout>
+    
+    <!-- Constraint pool -->
+    <GridView
+	    android:id="@+id/gridview_constraints"
+	    android:layout_width="fill_parent" 
+	    android:layout_height="wrap_content"
+	    android:columnWidth="32dp"
+	    android:numColumns="8"
+	    android:verticalSpacing="10dp"
+	    android:horizontalSpacing="10dp"
+	    android:stretchMode="spacingWidth"
+	    android:gravity="center"
+	/>
+    
+</LinearLayout>

@@ -1,0 +1,89 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@android:color/background_dark"
+    tools:context=".LevelActivity" >
+
+    <!-- top bar -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/activity_vertical_margin">
+        
+        <ImageView
+	        android:id="@+id/icon_navigation_back"
+	        android:contentDescription="@string/app_name"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_centerVertical="true"
+	        android:src="@drawable/navigation_back" />
+        
+   	    <TextView
+   	        android:id="@+id/text_level"
+   	        style="@style/text.white.large"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_toRightOf="@+id/icon_navigation_back"
+	        android:layout_marginLeft="20dp"
+	        android:layout_centerVertical="true"
+	        android:text="@string/hello_world" />    
+	        
+   	    <ImageView
+	        android:id="@+id/icon_progress"
+	        android:contentDescription="@string/app_name"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentRight="true"
+	        android:layout_centerVertical="true"
+	        android:src="@drawable/progress_new" />
+    </RelativeLayout>
+
+    <!-- game -->
+    <RelativeLayout 
+        android:id="@+id/fragment_container"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp" 
+        android:background="@android:color/background_light"/>
+    
+    <!-- bottom navigation bar -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:gravity="center">
+        
+        <ImageView
+	        android:id="@+id/icon_navigation_previous_item"
+	        android:contentDescription="@string/app_name"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:src="@drawable/navigation_previous_item" />
+        
+        <ImageView
+	        android:id="@+id/icon_navigation_refresh"
+	        android:contentDescription="@string/app_name"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_toRightOf="@+id/icon_navigation_previous_item"
+	        android:layout_marginLeft="20dp"
+	        android:src="@drawable/navigation_refresh" />
+        
+        <ImageView
+	        android:id="@+id/icon_navigation_next_item"
+	        android:contentDescription="@string/app_name"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_toRightOf="@+id/icon_navigation_refresh"
+	        android:layout_marginLeft="20dp"
+	        android:src="@drawable/navigation_next_item" />
+    </RelativeLayout>
+
+</LinearLayout>
