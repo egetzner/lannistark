@@ -9,22 +9,22 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="@android:color/transparent">"
+        android:background="@drawable/background_black_left_top_right">
 	    <TextView
 	        android:id="@+id/text_diagnoses"
-	        style="@style/text.black"
+	        style="@style/text.white"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:text="diagnoses: # / #" />
 	    <TextView
 	        android:id="@+id/text_tries"
-	        style="@style/text.black"
+	        style="@style/text.white"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:text="tries: #" />
 	    <TextView
 	        android:id="@+id/text_best"
-	        style="@style/text.black"
+	        style="@style/text.white"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:text="best: #" />
@@ -43,12 +43,14 @@
 	        android:layout_height="match_parent"
 	        android:layout_weight="1"
 	        android:orientation="vertical"
+	        android:background="@drawable/background_black_left_top_right"
 	        >
        	    <TextView
-		        style="@style/text.black"
+		        style="@style/text.white"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
-		        android:text="here comes the conflicts" />
+		        android:layout_gravity="center_horizontal"
+		        android:text="conflicts" />
     	    <ListView android:id="@+id/listview_minimalconflicts"
 		        android:layout_height="wrap_content"
 		        android:layout_width="match_parent">
@@ -61,12 +63,14 @@
 	        android:layout_height="match_parent"
 	        android:layout_weight="1"
 	        android:orientation="vertical"
+	        android:background="@drawable/background_black_top_right"
 	        >
        	    <TextView
-		        style="@style/text.black"
+		        style="@style/text.white"
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
-		        android:text="here comes the diagnoses" />
+		        android:layout_gravity="center_horizontal"
+		        android:text="diagnoses" />
       	    <ListView android:id="@+id/listview_diagnoses"
 		        android:layout_height="wrap_content"
 		        android:layout_width="match_parent">
@@ -78,7 +82,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/darker_gray"
+        android:background="@drawable/background_black_left_top_right"
         android:gravity="center">
        	<ImageView
 	       android:id="@+id/icon_navigation_cancel"
@@ -92,7 +96,7 @@
 		    android:id="@+id/gridview_diagnose"
 		    android:layout_width="fill_parent" 
 		    android:layout_height="wrap_content"
-		    android:columnWidth="24dp"
+		    android:columnWidth="22dp"
 		    android:numColumns="8"
 		    android:verticalSpacing="2dp"
 		    android:horizontalSpacing="2dp"
@@ -121,6 +125,7 @@
 	    android:horizontalSpacing="10dp"
 	    android:stretchMode="spacingWidth"
 	    android:gravity="center"
+	    android:background="@drawable/background_black_complete"
 	/>
     
 </LinearLayout>

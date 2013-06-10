@@ -62,7 +62,7 @@ public class GameFragment extends Fragment {
         
         //test
         DiagnoseCalculator diagnoseCalculator = new DiagnoseCalculator(conflictSet);
-        diagnoseSet = diagnoseCalculator.getDiagnoses();
+        //diagnoseSet = diagnoseCalculator.getDiagnoses();
         
         //prepare set for conflict pool
         Set<Constraint> constraintPool = new HashSet<Constraint>();

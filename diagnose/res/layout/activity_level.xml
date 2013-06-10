@@ -33,7 +33,7 @@
 	        android:layout_toRightOf="@+id/icon_navigation_back"
 	        android:layout_marginLeft="20dp"
 	        android:layout_centerVertical="true"
-	        android:text="@string/hello_world" />    
+	        android:text="Level #" />    
 	        
    	    <ImageView
 	        android:id="@+id/icon_progress"

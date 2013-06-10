@@ -2,12 +2,14 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" 
     android:layout_gravity="center"
+    android:paddingTop="5dp"
+    android:paddingBottom="5dp"
     android:orientation="horizontal">
     <ImageView
      	android:contentDescription="@string/app_name"
-	    android:layout_width="10dp"
-	    android:layout_height="15dp"
-	    android:src="@drawable/navigation_previous_item" />
+	    android:layout_width="8dp"
+	    android:layout_height="32dp"
+	    android:src="@drawable/icon_curlyopen" />
     <LinearLayout
         android:id="@+id/linearlayout_constraints"
         android:layout_width="wrap_content"
@@ -17,7 +19,7 @@
     </LinearLayout>
     <ImageView
      	android:contentDescription="@string/app_name"
-	    android:layout_width="10dp"
-	    android:layout_height="15dp"
-	    android:src="@drawable/navigation_next_item" />    
+	    android:layout_width="8dp"
+	    android:layout_height="32dp"
+	    android:src="@drawable/icon_curlyclosed" />    
 </LinearLayout> 

@@ -58,7 +58,18 @@ public class ConstraintListAdapter extends BaseAdapter{
 		row.removeAllViews();
 		for (Constraint c : constraints.get(position)) {
 			ImageView imageView = new ImageView(context);
-			imageView.setLayoutParams(new LayoutParams(24, 24));
+			if (constraints.get(position).size() <= 4) {
+				//utilize space for bigger representation
+				LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(32, 32);
+				lp.setMargins(3, 5, 3, 5);
+				imageView.setLayoutParams(lp);
+			} else if (constraints.get(position).size() <= 6) {
+				LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(24, 24);
+				imageView.setLayoutParams(lp);				
+			} else {
+				LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(18, 18);
+				imageView.setLayoutParams(lp);	
+			}
             imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
 			if (deactivatableConstraints)
 				imageView.setImageResource(c.getDrawable());
