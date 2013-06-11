@@ -4,6 +4,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -17,11 +19,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 import at.tugraz.ist.wv.diagnose.R;
 import at.tugraz.ist.wv.diagnose.abstraction.Constraint;
+import at.tugraz.ist.wv.diagnose.abstraction.GameLevel;
+import at.tugraz.ist.wv.diagnose.abstraction.LevelManager;
 import at.tugraz.ist.wv.diagnose.adapter.ConstraintAdapter;
 import at.tugraz.ist.wv.diagnose.adapter.ConstraintListAdapter;
 import at.tugraz.ist.wv.diagnose.processing.DiagnoseCalculator;
 
-public class GameFragment extends Fragment {
+public class GameFragment extends Fragment implements AlertDialog.OnClickListener {
 
 	//adapters
 	private ConstraintListAdapter conflictListAdapter;
@@ -30,12 +34,13 @@ public class GameFragment extends Fragment {
 	private ConstraintAdapter constraintAdapter;
 	
 	//constraint sets
-	private Set<Set<Constraint>> conflictSet;
+	//private Set<Set<Constraint>> conflictSet;
 	private Set<Set<Constraint>> diagnoseSet;
 	
 	//gameplay
 	private DiagnoseCalculator diagnoseCalculator;
 	private int numTries;
+	private int numGuessed;
 	private int numBest;
 	
 	//textviews
@@ -43,13 +48,15 @@ public class GameFragment extends Fragment {
 	TextView textviewTries;
 	TextView textviewBest;
 	
-	//callback listener for activities
-    public interface OnGameCompletedListener {
-        public void onGameCompleted(int numTries);
-    }
-    
     OnGameCompletedListener onGameCompletedListener;
 
+    GameLevel level;
+    
+	//callback listener for activities
+    public interface OnGameCompletedListener {
+		void onGameCompleted(int numTries, int numDiags, int numDiagsTotal);
+    }
+    
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -71,11 +78,38 @@ public class GameFragment extends Fragment {
         textviewTries = (TextView) layout.findViewById(R.id.text_tries);
         textviewBest = (TextView) layout.findViewById(R.id.text_best);
         
+        
+        level = LevelManager.getInstance().getNewLevel();
+                
         //handle input
-        	//handle input sets
-        conflictSet = new HashSet<Set<Constraint>>();
         diagnoseSet = new HashSet<Set<Constraint>>();
-        	//add dummy input
+        
+        
+        //conflictSet = new HashSet<Set<Constraint>>(ConflictCalculator.calculateConflicts(3, 5, 1,3));
+        
+        /*
+        Set<Constraint> constraints = new HashSet<Constraint>();
+        constraints.add(Constraint.YELLOW);
+        constraints.add(Constraint.RED);
+        conflictSet.add(constraints);
+        constraints = new HashSet<Constraint>();
+        constraints.add(Constraint.BLUE);
+        constraints.add(Constraint.RED);
+        //conflictSet.add(constraints);
+        constraints = new HashSet<Constraint>();
+        constraints.add(Constraint.RED);
+        constraints.add(Constraint.BLUE);
+        conflictSet.add(constraints);
+        constraints = new HashSet<Constraint>();
+        constraints.add(Constraint.YELLOW);
+        constraints.add(Constraint.GREEN);
+        conflictSet.add(constraints);
+        constraints = new HashSet<Constraint>();
+        constraints.add(Constraint.BLACK);
+        conflictSet.add(constraints);
+		*/
+        
+        /*
         Set<Constraint> constraints = new HashSet<Constraint>();
         constraints.add(Constraint.GREEN);
         constraints.add(Constraint.BLACK);
@@ -92,24 +126,28 @@ public class GameFragment extends Fragment {
         constraints.add(Constraint.GREEN);
         constraints.add(Constraint.WHITE);
         conflictSet.add(constraints);
+        
+        */
+        
 	    	//handle other input data
 	    numTries = 0;
+	    numGuessed = 0;
 	    numBest = 0;
         
         //process diagnoses
-        diagnoseCalculator = new DiagnoseCalculator(conflictSet);
+        diagnoseCalculator = level.getDiagnosisCalculator(); 
         
         //show text information
         updateTextInformation();
         
         //prepare set for conflict pool
         Set<Constraint> constraintPool = new HashSet<Constraint>();
-        for (Set<Constraint> input : conflictSet)
+        for (Set<Constraint> input : level.getConflicts())
         	constraintPool.addAll(input);
         
         //create conflictList
         ListView conflictList = (ListView) layout.findViewById(R.id.listview_minimalconflicts);
-        conflictListAdapter = new ConstraintListAdapter(getActivity(), conflictSet, true);
+        conflictListAdapter = new ConstraintListAdapter(getActivity(), level.getConflicts(), true);
         conflictList.setAdapter(conflictListAdapter);
         
         //create diagnoseList
@@ -154,7 +192,7 @@ public class GameFragment extends Fragment {
 			public void onClick(View arg0) {
 				addDiagnose();
 		}});
-        
+                
         //return layout
         return layout;
     }
@@ -170,6 +208,7 @@ public class GameFragment extends Fragment {
     	if (!diagnoseSet.contains(diagnose)) {
     		if (diagnoseCalculator.isDiagnose(diagnose)) {
 	    		diagnoseSet.add(diagnose);
+	    		numGuessed++;
 	    		diagnoseListAdapter.addDiagnose(diagnoseAdapter.getConstraints());
 	    		checkGameCompletion();
     		} else {
@@ -200,9 +239,44 @@ public class GameFragment extends Fragment {
     	System.out.println(diagnoseSet.size() + " / " + diagnoseCalculator.getNumberOfDiagnoses());
     	if (diagnoseSet.size() == diagnoseCalculator.getNumberOfDiagnoses())
     		//game complete
-    		onGameCompletedListener.onGameCompleted(numTries);
+    		onGameCompletedListener.onGameCompleted(numTries,numGuessed,diagnoseSet.size());
     }
     
+	void onSolve(View v)
+	{
+		System.out.println("on Solve called!");
+		onSolve();
+		    	
+	}
+	void onSolve()
+	{
+    	for (Set<Constraint> diagnose: diagnoseCalculator.getDiagnoses())
+		{
+        	if (!diagnoseSet.contains(diagnose)) {
+        		{
+    	    		diagnoseSet.add(diagnose);
+    	    		diagnoseListAdapter.addDiagnose(diagnose);
+    	    		checkGameCompletion();
+        		} 
+        	} else {
+        		//no need to do anything, we already have the diagnosis
+        	}
+		}
+
+    	diagnoseAdapter.clear();
+    	notifyAdapters();
+    	updateTextInformation();
+		onGameCompletedListener.onGameCompleted(numTries,numGuessed,diagnoseSet.size());
+
+
+	}
+
+	@Override
+	public void onClick(DialogInterface dialog, int which) {
+		onSolve();
+		
+	}
+
 
 
 }

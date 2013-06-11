@@ -22,7 +22,7 @@ public class ConstraintListAdapter extends BaseAdapter{
 	private List<List<Constraint>> constraints;
 	private boolean deactivatableConstraints;
 	
-	public ConstraintListAdapter(Context context, Set<Set<Constraint>> constraints, boolean deactivatableConstraints) {
+	public ConstraintListAdapter(Context context, Collection<Set<Constraint>> constraints, boolean deactivatableConstraints) {
 		this.context = context;
 		this.constraints = new ArrayList<List<Constraint>>();
 		for (Set<Constraint> s : constraints) {

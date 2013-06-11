@@ -1,5 +1,8 @@
 package at.tugraz.ist.wv.diagnose.abstraction;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import at.tugraz.ist.wv.diagnose.R;
 
 
@@ -20,6 +23,20 @@ public enum Constraint {
 	
 	public void deactivate() {
 		this.active = false;
+	}
+	
+	public static Set<Constraint> getAllConstraints()
+	{
+		HashSet<Constraint> set = new HashSet<Constraint>();
+		set.add(RED);
+		set.add(GREEN);
+		set.add(BLUE);
+		set.add(CYAN);
+		set.add(MAGENTA);
+		set.add(YELLOW);
+		set.add(BLACK);
+		set.add(WHITE);
+		return set;
 	}
 	
 	public int getDrawable() {

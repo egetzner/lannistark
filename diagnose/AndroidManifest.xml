@@ -7,7 +7,7 @@
     <uses-sdk
         android:minSdkVersion="8"
         android:targetSdkVersion="17" />
-
+	<uses-permission android:name="android.permission.READ_CONTACTS" />
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -24,8 +24,26 @@
         </activity>
         <activity
             android:name="at.tugraz.ist.wv.diagnose.LevelActivity"
-            android:label="@string/title_activity_level" 
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+            android:label="@string/title_activity_level"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+        </activity>
+        <activity
+            android:name="at.tugraz.ist.wv.diagnose.ListFruitActivity"
+            android:label="@string/title_activity_level"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+        </activity>
+        <activity
+            android:name="at.tugraz.ist.wv.diagnose.ListViewLoader"
+            android:label="@string/title_activity_level"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+        </activity>
+        <activity
+            android:name="at.tugraz.ist.wv.diagnose.ListLevelActivity"
+            android:label="@string/title_activity_list_level"
+            android:parentActivityName="at.tugraz.ist.wv.diagnose.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="at.tugraz.ist.wv.diagnose.MainActivity" />
         </activity>
     </application>
 

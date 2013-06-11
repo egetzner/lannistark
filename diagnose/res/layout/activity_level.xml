@@ -32,8 +32,7 @@
 	        android:layout_height="wrap_content"
 	        android:layout_toRightOf="@+id/icon_navigation_back"
 	        android:layout_marginLeft="20dp"
-	        android:layout_centerVertical="true"
-	        android:text="Level #" />    
+	        android:layout_centerVertical="true" />    
 	        
    	    <ImageView
 	        android:id="@+id/icon_progress"
@@ -43,6 +42,15 @@
 	        android:layout_alignParentRight="true"
 	        android:layout_centerVertical="true"
 	        android:src="@drawable/progress_new" />
+
+   	    <TextView
+   	        android:id="@+id/text_points"
+   	        style="@style/text.white.bold"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentRight="true"
+	        android:layout_centerVertical="true" />
+
     </RelativeLayout>
 
     <!-- game -->
@@ -84,6 +92,7 @@
 	        android:layout_toRightOf="@+id/icon_navigation_refresh"
 	        android:layout_marginLeft="20dp"
 	        android:src="@drawable/navigation_next_item" />
+
     </RelativeLayout>
 
 </LinearLayout>

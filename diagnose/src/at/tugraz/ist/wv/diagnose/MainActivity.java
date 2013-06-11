@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.view.Menu;
 import android.view.View;
+import at.tugraz.ist.wv.diagnose.abstraction.LevelManager;
 
 public class MainActivity extends Activity {
 
@@ -15,10 +16,15 @@ public class MainActivity extends Activity {
 	}
 
 	public void onSubmit(View v) {
+		LevelManager.getInstance().resetLevels();
     	Intent intent = new Intent(this, LevelActivity.class);
     	startActivity(intent);
 	}
 	
+	public void onBtnLevelList(View v) {
+    	Intent intent = new Intent(this, LevelActivity.class);
+    	startActivity(intent);
+	}	
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
