@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
+import at.tugraz.ist.wv.diagnose.abstraction.GameLevel;
 import at.tugraz.ist.wv.diagnose.abstraction.LevelManager;
 import at.tugraz.ist.wv.diagnose.fragment.GameFragment;
 import at.tugraz.ist.wv.diagnose.fragment.GameFragment.OnGameCompletedListener;
@@ -22,16 +23,22 @@ public class LevelActivity extends FragmentActivity implements OnGameCompletedLi
 	TextView level;
 	TextView points;
 	LevelManager manager;
-	
+	GameLevel gameLevel;
 	GameFragment fragment;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_level);
+		
+		//prepare game fragment
+		manager = new LevelManager();
+		gameLevel = manager.getNewLevel();
+		fragment = GameFragment.newInstance(gameLevel);
+		
+		//show game fragment
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-		fragment = new GameFragment();
 		fragmentTransaction.add(R.id.fragment_container, fragment);
 		fragmentTransaction.commit();
 		
@@ -45,8 +52,6 @@ public class LevelActivity extends FragmentActivity implements OnGameCompletedLi
 			}
 		});
 		
-		manager = LevelManager.getInstance();
-		
 		level = (TextView) findViewById(R.id.text_level);
 		level.setText(getResources().getString(R.string.text_level) + manager.getLevelCounter());
 	
@@ -57,8 +62,8 @@ public class LevelActivity extends FragmentActivity implements OnGameCompletedLi
 	
 	private void goToNextLevel()
 	{
-		
-		fragment = new GameFragment();
+		gameLevel = manager.getNewLevel();
+		fragment = GameFragment.newInstance(gameLevel);
 		
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -66,7 +71,6 @@ public class LevelActivity extends FragmentActivity implements OnGameCompletedLi
 		fragmentTransaction.commit();
 		
 		level.setText(getResources().getString(R.string.text_level) + manager.getLevelCounter());
-
 		//TODO: reset star
 	}
 	
@@ -79,17 +83,17 @@ public class LevelActivity extends FragmentActivity implements OnGameCompletedLi
 	}
 
 	@Override
-	public void onGameCompleted(int numTries, int numDiags, int numDiagsTotal) {
+	public void onGameCompleted() {
 		
-		manager.addToNumTries(numTries);
-		manager.addToNumCorrectDiags(numDiags);
-		manager.addToNumPossibleDiags(numDiagsTotal);
+		manager.addToNumTries(gameLevel.getNumTries());
+		manager.addToNumCorrectDiags(gameLevel.getCurrentDiagnoses().size());
+		manager.addToNumPossibleDiags(gameLevel.getTargetDiagnoses().size());
 		points.setText("Points: " + manager.getNumCorrectDiags() + "/" + manager.getNumPossibleDiags());
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
 		// 2. Chain together various setter methods to set the dialog characteristics
-		builder.setMessage("You completed the game in " + numTries + " tries!")
+		builder.setMessage("You completed the level in " + gameLevel.getNumTries() + " tries!")
 		       .setTitle("Congratulations!")
 		       .setNegativeButton("backToGame", new AlertDialog.OnClickListener() {
 				
@@ -112,8 +116,13 @@ public class LevelActivity extends FragmentActivity implements OnGameCompletedLi
 	}
 	
 	public void displaySolveDialog() {
-				
 		//next was clicked in the level activity, show dialog
+		//if the current level is completed, skip to the next one
+		if (gameLevel.isComplete()) {
+			goToNextLevel();
+			return;
+		} 
+		//otherwise show dialog
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		// Add the buttons
 		builder.setPositiveButton("Solve!", (AlertDialog.OnClickListener) fragment);

@@ -1,7 +1,5 @@
 package at.tugraz.ist.wv.diagnose.abstraction;
 
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -15,27 +13,14 @@ public class LevelManager {
 		private int index;
 
 		private Action(int index) {
-		this.index = index;
+			this.index = index;
 		}
-		
-
-
 	};
 	
-
 	private static final int MAX_CONFLICTS = 8;
 	
-	private static LevelManager instance;
-
-	public static LevelManager getInstance() {
-		if (instance == null)
-			instance = new LevelManager();
-		
-		return instance;
-	}
-	
 	public void resetLevels() {
-		levelCounter = 1;
+		levelCounter = 0;
 		numCorrectDiags = 0;
 		numTries = 0;
 		numPossibleDiags = 0;	
@@ -48,8 +33,7 @@ public class LevelManager {
 		action = Action.start;
 	}
 
-	
-	private LevelManager() {
+	public LevelManager() {
 		resetLevels();
 	}
 	

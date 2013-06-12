@@ -16,7 +16,6 @@ public class MainActivity extends Activity {
 	}
 
 	public void onSubmit(View v) {
-		LevelManager.getInstance().resetLevels();
     	Intent intent = new Intent(this, LevelActivity.class);
     	startActivity(intent);
 	}

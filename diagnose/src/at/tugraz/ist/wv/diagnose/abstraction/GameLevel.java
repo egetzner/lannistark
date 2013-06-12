@@ -4,43 +4,105 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import android.widget.Toast;
+import at.tugraz.ist.wv.diagnose.R;
+import at.tugraz.ist.wv.diagnose.fragment.GameFragment;
 import at.tugraz.ist.wv.diagnose.processing.DiagnoseCalculator;
 
 public class GameLevel {
 
-	private List<Set<Constraint>> conflicts;
-	private DiagnoseCalculator diagnosisCalculator;
+	//static data
 	private int levelNum;
+	private int numTriesBest;
+	private List<Set<Constraint>> conflicts;
+	private Set<Set<Constraint>> targetDiagnoses;
+	private Set<Constraint> availableConstraints;
+	private boolean isPersistentLevel;
+	
+	//gamestate
+	private int numTries;
+	private Set<Set<Constraint>> currentDiagnoses;
 	
 	public GameLevel(int num, List<Set<Constraint>> conflicts) {
+		//acquire input data
 		this.levelNum = num;
 		this.conflicts = conflicts;
 		
-		HashSet<Set<Constraint>> conflictSet = new HashSet<Set<Constraint>>(conflicts);
+		//calculate target
+		DiagnoseCalculator diagnosisCalculator = new DiagnoseCalculator(new HashSet<Set<Constraint>>(conflicts));
+		targetDiagnoses = diagnosisCalculator.getDiagnoses();
+
+		//calculate constraints
+		availableConstraints = new HashSet<Constraint>();
+		for(Set<Constraint> temp : conflicts)
+			availableConstraints.addAll(temp);
 		
-		this.diagnosisCalculator = new DiagnoseCalculator(conflictSet);
-	
-		}
-
-	public List<Set<Constraint>> getConflicts() {
-		return conflicts;
+		//initialize remaining static data
+		numTriesBest = 0;
+		isPersistentLevel = true;
+		
+		//initialize gamestate
+		numTries = 0;
+		currentDiagnoses = new HashSet<Set<Constraint>>();
 	}
 
-	public void setConflicts(List<Set<Constraint>> conflicts) {
-		this.conflicts = conflicts;
-	}
-
-	public DiagnoseCalculator getDiagnosisCalculator() {
-		return diagnosisCalculator;
-	}
-
-	public void setDiagnosisCalculator(DiagnoseCalculator diagnosisCalculator) {
-		this.diagnosisCalculator = diagnosisCalculator;
-	}
-
+	/*
+	 * GETTERS FOR STATIC DATA
+	 */
 	public int getLevelNum() {
 		return levelNum;
 	}
 	
+	public int getNumTriesBest() {
+		return numTriesBest;
+	}
 	
+	public Set<Set<Constraint>> getConflicts() {
+		return new HashSet<Set<Constraint>>(conflicts);
+	}
+	
+	public Set<Set<Constraint>> getTargetDiagnoses() {
+		return targetDiagnoses;
+	}
+	
+	public Set<Constraint> getAvailableConstraints() {
+		return availableConstraints;
+	}
+
+	/*
+	 * GETTERS FOR GAMESTATE
+	 */
+	public Set<Set<Constraint>> getCurrentDiagnoses() {
+		return currentDiagnoses;
+	}
+	
+	public int getNumTries() {
+		return numTries;
+	}
+
+	public boolean isNumTriesBestVisible() {
+		//should only be visible for persistent levels 
+		return this.isPersistentLevel;
+	}
+
+	/*
+	 * GAME INTERFACE
+	 */
+	public int addDiagnose(Set<Constraint> diagnose) {
+		numTries++;
+		
+		//handle errors
+		if (currentDiagnoses.contains(diagnose))
+			return GameFragment.ERROR_DUPLICATE_DIAGNOSE;
+		if (!targetDiagnoses.contains(diagnose))
+			return GameFragment.ERROR_INVALID_DIAGNOSE;
+		
+		//no error
+		currentDiagnoses.add(diagnose);
+		return 0;
+	}
+
+	public boolean isComplete() {
+		return (currentDiagnoses.size() == targetDiagnoses.size());
+	}
 }

@@ -1,5 +1,6 @@
 package at.tugraz.ist.wv.diagnose.fragment;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,13 +21,15 @@ import android.widget.Toast;
 import at.tugraz.ist.wv.diagnose.R;
 import at.tugraz.ist.wv.diagnose.abstraction.Constraint;
 import at.tugraz.ist.wv.diagnose.abstraction.GameLevel;
-import at.tugraz.ist.wv.diagnose.abstraction.LevelManager;
 import at.tugraz.ist.wv.diagnose.adapter.ConstraintAdapter;
 import at.tugraz.ist.wv.diagnose.adapter.ConstraintListAdapter;
-import at.tugraz.ist.wv.diagnose.processing.DiagnoseCalculator;
 
 public class GameFragment extends Fragment implements AlertDialog.OnClickListener {
 
+	//constants
+	public static final int ERROR_DUPLICATE_DIAGNOSE = -1;
+	public static final int ERROR_INVALID_DIAGNOSE = -2;
+	
 	//adapters
 	private ConstraintListAdapter conflictListAdapter;
 	private ConstraintListAdapter diagnoseListAdapter;
@@ -34,14 +37,7 @@ public class GameFragment extends Fragment implements AlertDialog.OnClickListene
 	private ConstraintAdapter constraintAdapter;
 	
 	//constraint sets
-	//private Set<Set<Constraint>> conflictSet;
-	private Set<Set<Constraint>> diagnoseSet;
-	
-	//gameplay
-	private DiagnoseCalculator diagnoseCalculator;
-	private int numTries;
-	private int numGuessed;
-	private int numBest;
+	GameLevel level;
 	
 	//textviews
 	TextView textviewDiagnoses;
@@ -50,11 +46,18 @@ public class GameFragment extends Fragment implements AlertDialog.OnClickListene
 	
     OnGameCompletedListener onGameCompletedListener;
 
-    GameLevel level;
-    
 	//callback listener for activities
     public interface OnGameCompletedListener {
-		void onGameCompleted(int numTries, int numDiags, int numDiagsTotal);
+		void onGameCompleted();
+    }
+    
+    /*
+     * Construction interface
+     */
+    public static GameFragment newInstance(GameLevel gameLevel) {
+    	GameFragment f = new GameFragment();
+    	f.initializeFragment(gameLevel);
+        return f;
     }
     
     @Override
@@ -66,7 +69,7 @@ public class GameFragment extends Fragment implements AlertDialog.OnClickListene
             throw new ClassCastException(activity.toString() + " must implement OnArticleSelectedListener");
         }
     }
-	
+    
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -77,28 +80,11 @@ public class GameFragment extends Fragment implements AlertDialog.OnClickListene
         textviewDiagnoses = (TextView) layout.findViewById(R.id.text_diagnoses);
         textviewTries = (TextView) layout.findViewById(R.id.text_tries);
         textviewBest = (TextView) layout.findViewById(R.id.text_best);
-        
-        
-        level = LevelManager.getInstance().getNewLevel();
-                
-        //handle input
-        diagnoseSet = new HashSet<Set<Constraint>>();
-        
-	    	//handle other input data
-	    numTries = 0;
-	    numGuessed = 0;
-	    numBest = 0;
-        
-        //process diagnoses
-        diagnoseCalculator = level.getDiagnosisCalculator(); 
+        if (!level.isNumTriesBestVisible())
+        	textviewBest.setVisibility(View.GONE);
         
         //show text information
         updateTextInformation();
-        
-        //prepare set for conflict pool
-        Set<Constraint> constraintPool = new HashSet<Constraint>();
-        for (Set<Constraint> input : level.getConflicts())
-        	constraintPool.addAll(input);
         
         //create conflictList
         ListView conflictList = (ListView) layout.findViewById(R.id.listview_minimalconflicts);
@@ -107,7 +93,7 @@ public class GameFragment extends Fragment implements AlertDialog.OnClickListene
         
         //create diagnoseList
         ListView diagnoseList = (ListView) layout.findViewById(R.id.listview_diagnoses);
-        diagnoseListAdapter = new ConstraintListAdapter(getActivity(), diagnoseSet, false);
+        diagnoseListAdapter = new ConstraintListAdapter(getActivity(), level.getCurrentDiagnoses(), false);
         diagnoseList.setAdapter(diagnoseListAdapter);
         
         //create diagnose grid
@@ -124,7 +110,7 @@ public class GameFragment extends Fragment implements AlertDialog.OnClickListene
         
         //create constraints grid
         GridView constraintsGrid = (GridView) layout.findViewById(R.id.gridview_constraints);
-        constraintAdapter = new ConstraintAdapter(getActivity(), constraintPool, true);
+        constraintAdapter = new ConstraintAdapter(getActivity(), level.getAvailableConstraints(), true);
         constraintsGrid.setAdapter(constraintAdapter);
         constraintsGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
@@ -151,6 +137,10 @@ public class GameFragment extends Fragment implements AlertDialog.OnClickListene
         //return layout
         return layout;
     }
+
+    public void initializeFragment(GameLevel gameLevel) {
+    	this.level = gameLevel;
+    }
     
     public void clearDiagnose() {
     	diagnoseAdapter.clear();
@@ -158,20 +148,24 @@ public class GameFragment extends Fragment implements AlertDialog.OnClickListene
     }
     
     public void addDiagnose() {
-    	numTries++;
+    	//get diagnose from adapter
     	Set<Constraint> diagnose = new HashSet<Constraint>(diagnoseAdapter.getConstraints());
-    	if (!diagnoseSet.contains(diagnose)) {
-    		if (diagnoseCalculator.isDiagnose(diagnose)) {
-	    		diagnoseSet.add(diagnose);
-	    		numGuessed++;
-	    		diagnoseListAdapter.addDiagnose(diagnoseAdapter.getConstraints());
-	    		checkGameCompletion();
-    		} else {
-    			Toast.makeText(getActivity(), getActivity().getString(R.string.fragment_game_toast_no_diagnose), Toast.LENGTH_SHORT).show();
-    		}
-    	} else {
+    	
+    	//attempt to add diagnose
+    	int error = level.addDiagnose(diagnose);
+ 
+    	//handle errors
+    	if (error == ERROR_INVALID_DIAGNOSE) {
+    		Toast.makeText(getActivity(), getActivity().getString(R.string.fragment_game_toast_no_diagnose), Toast.LENGTH_SHORT).show();
+    	} else if (error == ERROR_DUPLICATE_DIAGNOSE) {
     		Toast.makeText(getActivity(), getActivity().getString(R.string.fragment_game_toast_duplicate_diagnose), Toast.LENGTH_SHORT).show();
+    	} else {
+    		//no error
+    		diagnoseListAdapter.addDiagnose(diagnose);
+    		checkGameCompletion();
     	}
+    	
+    	//update ui
     	diagnoseAdapter.clear();
     	notifyAdapters();
     	updateTextInformation();
@@ -185,31 +179,25 @@ public class GameFragment extends Fragment implements AlertDialog.OnClickListene
     }
     
     private void updateTextInformation() {
-    	textviewDiagnoses.setText(getActivity().getString(R.string.fragment_game_text_num_diagnoses) + diagnoseSet.size() + "/" + diagnoseCalculator.getNumberOfDiagnoses());
-    	textviewTries.setText(getActivity().getString(R.string.fragment_game_text_num_tries) + numTries);
-    	textviewBest.setText(getActivity().getString(R.string.fragment_game_text_num_best) + numBest);
+    	textviewDiagnoses.setText(getActivity().getString(R.string.fragment_game_text_num_diagnoses) + level.getCurrentDiagnoses().size() + "/" + level.getTargetDiagnoses().size());
+    	textviewTries.setText(getActivity().getString(R.string.fragment_game_text_num_tries) + level.getNumTries());
+    	textviewBest.setText(getActivity().getString(R.string.fragment_game_text_num_best) + level.getNumTriesBest());
     }
     
     private void checkGameCompletion() {
-    	System.out.println(diagnoseSet.size() + " / " + diagnoseCalculator.getNumberOfDiagnoses());
-    	if (diagnoseSet.size() == diagnoseCalculator.getNumberOfDiagnoses())
-    		//game complete
-    		onGameCompletedListener.onGameCompleted(numTries,numGuessed,diagnoseSet.size());
+    	if (level.isComplete())
+    		onGameCompletedListener.onGameCompleted();
     }
     
-	void onSolve(View v)
-	{
-		System.out.println("on Solve called!");
-		onSolve();
-		    	
-	}
 	void onSolve()
 	{
-    	for (Set<Constraint> diagnose: diagnoseCalculator.getDiagnoses())
+		//TODO: add some sort of penalty, maybe depending on gametype
+		
+    	for (Set<Constraint> diagnose: level.getTargetDiagnoses())
 		{
-        	if (!diagnoseSet.contains(diagnose)) {
+        	if (!level.getCurrentDiagnoses().contains(diagnose)) {
         		{
-    	    		diagnoseSet.add(diagnose);
+    	    		level.addDiagnose(diagnose);
     	    		diagnoseListAdapter.addDiagnose(diagnose);
     	    		checkGameCompletion();
         		} 
@@ -221,17 +209,12 @@ public class GameFragment extends Fragment implements AlertDialog.OnClickListene
     	diagnoseAdapter.clear();
     	notifyAdapters();
     	updateTextInformation();
-		onGameCompletedListener.onGameCompleted(numTries,numGuessed,diagnoseSet.size());
-
-
+		onGameCompletedListener.onGameCompleted();
 	}
 
+	//the solve AlertDialog was accepted
 	@Override
-	public void onClick(DialogInterface dialog, int which) {
+	public void onClick(DialogInterface arg0, int arg1) {
 		onSolve();
-		
 	}
-
-
-
 }
