@@ -15,7 +15,6 @@ public class GameLevel {
 	private List<Set<Constraint>> conflicts;
 	private Set<Set<Constraint>> targetDiagnoses;
 	private Set<Constraint> availableConstraints;
-	private boolean isPersistent;
 	
 	//gamestate
 	private int numTries;
@@ -37,7 +36,6 @@ public class GameLevel {
 		
 		//initialize remaining static data
 		numTriesBest = 0;
-		isPersistent = false;
 		
 		//initialize gamestate
 		numTries = 0;
@@ -67,10 +65,6 @@ public class GameLevel {
 		return availableConstraints;
 	}
 	
-	public boolean isPersistent() {
-		return isPersistent;
-	}
-
 	/*
 	 * GETTERS FOR GAMESTATE
 	 */

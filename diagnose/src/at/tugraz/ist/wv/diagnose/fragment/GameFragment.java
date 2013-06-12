@@ -1,6 +1,5 @@
 package at.tugraz.ist.wv.diagnose.fragment;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -26,9 +25,13 @@ import at.tugraz.ist.wv.diagnose.adapter.ConstraintListAdapter;
 
 public class GameFragment extends Fragment implements AlertDialog.OnClickListener {
 
-	//constants
+	//error constants
 	public static final int ERROR_DUPLICATE_DIAGNOSE = -1;
 	public static final int ERROR_INVALID_DIAGNOSE = -2;
+	
+	//gametype constants
+	public static final int GAMETYPE_LEVEL_COMPLETION = 1;
+	public static final int GAMETYPE_TIME_BASIC = 2;
 	
 	//adapters
 	private ConstraintListAdapter conflictListAdapter;
@@ -36,27 +39,36 @@ public class GameFragment extends Fragment implements AlertDialog.OnClickListene
 	private ConstraintAdapter diagnoseAdapter;
 	private ConstraintAdapter constraintAdapter;
 	
-	//constraint sets
+	//game information
 	GameLevel level;
+	int gametype;
 	
 	//textviews
 	TextView textviewDiagnoses;
 	TextView textviewTries;
 	TextView textviewBest;
 	
+	//activity interfaces
     OnGameCompletedListener onGameCompletedListener;
-
+    GametypeTimingBasicInformationSupplier gametypeTimingBasicInformationSupplier; 
+    
 	//callback listener for activities
     public interface OnGameCompletedListener {
 		void onGameCompleted();
     }
     
+    //callback for information getters in gametype: GAMETYPE_TIMING_BASIC
+    public interface GametypeTimingBasicInformationSupplier {
+    	int getNumCompletedLevels();
+    	int getNumCompletedLevelsBest();
+    }
+    
     /*
      * Construction interface
      */
-    public static GameFragment newInstance(GameLevel gameLevel) {
+    public static GameFragment newInstance(GameLevel gameLevel, int gametype) {
     	GameFragment f = new GameFragment();
-    	f.initializeFragment(gameLevel);
+    	f.initializeFragment(gameLevel, gametype);
         return f;
     }
     
@@ -67,6 +79,13 @@ public class GameFragment extends Fragment implements AlertDialog.OnClickListene
         	onGameCompletedListener = (OnGameCompletedListener) activity;
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString() + " must implement OnArticleSelectedListener");
+        }
+        if (gametype == GAMETYPE_TIME_BASIC) {
+	        try {
+	        	gametypeTimingBasicInformationSupplier = (GametypeTimingBasicInformationSupplier) activity;
+	        } catch (ClassCastException e) {
+	            throw new ClassCastException(activity.toString() + " must implement GametypeTimingBasicInformationSupplier");
+	        }
         }
     }
     
@@ -81,7 +100,7 @@ public class GameFragment extends Fragment implements AlertDialog.OnClickListene
         textviewTries = (TextView) layout.findViewById(R.id.text_tries);
         textviewBest = (TextView) layout.findViewById(R.id.text_best);
         //if game is not persistent (-> no levelActivity) change label of numtries to numsolved, as we are counting how many levels we have completed in a given time
-        if (!level.isPersistent()) {
+        if (gametype == GAMETYPE_TIME_BASIC) {
         	TextView text = (TextView) layout.findViewById(R.id.text_label_tries);
         	text.setText(R.string.fragment_game_text_num_completed);
         }
@@ -141,8 +160,9 @@ public class GameFragment extends Fragment implements AlertDialog.OnClickListene
         return layout;
     }
 
-    public void initializeFragment(GameLevel gameLevel) {
+    public void initializeFragment(GameLevel gameLevel, int gametype) {
     	this.level = gameLevel;
+    	this.gametype = gametype;
     }
     
     public void clearDiagnose() {
@@ -183,8 +203,14 @@ public class GameFragment extends Fragment implements AlertDialog.OnClickListene
     
     private void updateTextInformation() {
     	textviewDiagnoses.setText(level.getCurrentDiagnoses().size() + "/" + level.getTargetDiagnoses().size());
-    	textviewTries.setText(String.valueOf(level.getNumTries()));
-    	textviewBest.setText(String.valueOf(level.getNumTriesBest()));
+    	if (gametype == GAMETYPE_LEVEL_COMPLETION) {
+	    	textviewTries.setText(String.valueOf(level.getNumTries()));
+	    	textviewBest.setText(String.valueOf(level.getNumTriesBest()));
+    	} 
+    	if (gametype == GAMETYPE_TIME_BASIC) {
+	    	textviewTries.setText(String.valueOf(gametypeTimingBasicInformationSupplier.getNumCompletedLevels()));
+	    	textviewBest.setText(String.valueOf(gametypeTimingBasicInformationSupplier.getNumCompletedLevelsBest()));
+    	}
     }
     
     private void checkGameCompletion() {

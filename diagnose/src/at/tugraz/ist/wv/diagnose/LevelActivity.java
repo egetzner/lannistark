@@ -34,7 +34,7 @@ public class LevelActivity extends FragmentActivity implements OnGameCompletedLi
 		//prepare game fragment
 		manager = new LevelManager();
 		gameLevel = manager.getNewLevel();
-		fragment = GameFragment.newInstance(gameLevel);
+		fragment = GameFragment.newInstance(gameLevel, GameFragment.GAMETYPE_LEVEL_COMPLETION);
 		
 		//show game fragment
 		FragmentManager fragmentManager = getSupportFragmentManager();
@@ -63,7 +63,7 @@ public class LevelActivity extends FragmentActivity implements OnGameCompletedLi
 	private void goToNextLevel()
 	{
 		gameLevel = manager.getNewLevel();
-		fragment = GameFragment.newInstance(gameLevel);
+		fragment = GameFragment.newInstance(gameLevel, GameFragment.GAMETYPE_LEVEL_COMPLETION);
 		
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
