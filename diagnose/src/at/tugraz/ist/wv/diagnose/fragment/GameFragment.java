@@ -80,8 +80,11 @@ public class GameFragment extends Fragment implements AlertDialog.OnClickListene
         textviewDiagnoses = (TextView) layout.findViewById(R.id.text_diagnoses);
         textviewTries = (TextView) layout.findViewById(R.id.text_tries);
         textviewBest = (TextView) layout.findViewById(R.id.text_best);
-        if (!level.isNumTriesBestVisible())
-        	textviewBest.setVisibility(View.GONE);
+        //if game is not persistent (-> no levelActivity) change label of numtries to numsolved, as we are counting how many levels we have completed in a given time
+        if (!level.isPersistent()) {
+        	TextView text = (TextView) layout.findViewById(R.id.text_label_tries);
+        	text.setText(R.string.fragment_game_text_num_completed);
+        }
         
         //show text information
         updateTextInformation();
@@ -179,9 +182,9 @@ public class GameFragment extends Fragment implements AlertDialog.OnClickListene
     }
     
     private void updateTextInformation() {
-    	textviewDiagnoses.setText(getActivity().getString(R.string.fragment_game_text_num_diagnoses) + level.getCurrentDiagnoses().size() + "/" + level.getTargetDiagnoses().size());
-    	textviewTries.setText(getActivity().getString(R.string.fragment_game_text_num_tries) + level.getNumTries());
-    	textviewBest.setText(getActivity().getString(R.string.fragment_game_text_num_best) + level.getNumTriesBest());
+    	textviewDiagnoses.setText(level.getCurrentDiagnoses().size() + "/" + level.getTargetDiagnoses().size());
+    	textviewTries.setText(String.valueOf(level.getNumTries()));
+    	textviewBest.setText(String.valueOf(level.getNumTriesBest()));
     }
     
     private void checkGameCompletion() {

@@ -4,8 +4,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import android.widget.Toast;
-import at.tugraz.ist.wv.diagnose.R;
 import at.tugraz.ist.wv.diagnose.fragment.GameFragment;
 import at.tugraz.ist.wv.diagnose.processing.DiagnoseCalculator;
 
@@ -17,7 +15,7 @@ public class GameLevel {
 	private List<Set<Constraint>> conflicts;
 	private Set<Set<Constraint>> targetDiagnoses;
 	private Set<Constraint> availableConstraints;
-	private boolean isPersistentLevel;
+	private boolean isPersistent;
 	
 	//gamestate
 	private int numTries;
@@ -39,7 +37,7 @@ public class GameLevel {
 		
 		//initialize remaining static data
 		numTriesBest = 0;
-		isPersistentLevel = true;
+		isPersistent = false;
 		
 		//initialize gamestate
 		numTries = 0;
@@ -68,6 +66,10 @@ public class GameLevel {
 	public Set<Constraint> getAvailableConstraints() {
 		return availableConstraints;
 	}
+	
+	public boolean isPersistent() {
+		return isPersistent;
+	}
 
 	/*
 	 * GETTERS FOR GAMESTATE
@@ -78,11 +80,6 @@ public class GameLevel {
 	
 	public int getNumTries() {
 		return numTries;
-	}
-
-	public boolean isNumTriesBestVisible() {
-		//should only be visible for persistent levels 
-		return this.isPersistentLevel;
 	}
 
 	/*

@@ -10,6 +10,7 @@
     <string name="title_activity_level">LevelActivity</string>
     <string name="fragment_game_text_num_diagnoses">diagnoses: </string>
     <string name="fragment_game_text_num_tries">tries: </string>
+    <string name="fragment_game_text_num_completed">completed: </string>
     <string name="fragment_game_text_num_best">best: </string>
     <string name="fragment_game_text_header_conflicts">conflicts</string>
     <string name="fragment_game_text_header_diagnoses">diagnoses</string>

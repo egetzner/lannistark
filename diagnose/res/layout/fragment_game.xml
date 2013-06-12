@@ -10,28 +10,56 @@
         android:layout_height="wrap_content"
         android:background="@color/black">
    	    <TextView
-	        android:id="@+id/text_diagnoses"
+	        android:id="@+id/text_label_diagnoses"
 	        style="@style/text.white.small"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_alignParentLeft="true"
+	        android:layout_marginRight="5dp"
 	        android:text="@string/fragment_game_text_num_diagnoses"
 	    />
+ 	    <TextView
+	        android:id="@+id/text_diagnoses"
+	        style="@style/text.white.small"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_toRightOf="@+id/text_label_diagnoses"
+	        android:text=""
+	    />
 	    <TextView
+	        android:id="@+id/text_label_tries"
+	        style="@style/text.white.small"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_marginRight="5dp"
+	        android:layout_toLeftOf="@+id/text_tries"
+			android:text="@string/fragment_game_text_num_tries"
+	    />
+   	    <TextView
 	        android:id="@+id/text_tries"
 	        style="@style/text.white.small"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:layout_toLeftOf="@+id/text_best"
-			android:text="@string/fragment_game_text_num_tries"
+	        android:layout_marginRight="5dp"
+	        android:layout_toLeftOf="@+id/text_label_best"
+			android:text=""
 	    />
 	    <TextView
+	        android:id="@+id/text_label_best"
+	        style="@style/text.white.small"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_toLeftOf="@+id/text_best"
+	        android:layout_marginRight="5dp"
+			android:text="@string/fragment_game_text_num_best"
+        />
+   	    <TextView
 	        android:id="@+id/text_best"
 	        style="@style/text.white.small"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_alignParentRight="true"
-			android:text="@string/fragment_game_text_num_best"
+			android:text=""
         />
 	    
 	    
