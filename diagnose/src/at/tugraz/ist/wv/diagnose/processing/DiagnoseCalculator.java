@@ -1,6 +1,11 @@
 package at.tugraz.ist.wv.diagnose.processing;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import at.tugraz.ist.wv.diagnose.abstraction.Constraint;
@@ -12,7 +17,106 @@ public class DiagnoseCalculator {
 	
 	public DiagnoseCalculator(Set<Set<Constraint>>conflicts) {
 		this.conflicts = conflicts;
-		calculateDiagnoses();
+		calculateDiagnosesSorted();
+	}
+	
+	private void calculateDiagnosesSorted()
+	{
+		diagnoses = new HashSet<Set<Constraint>>();
+		
+		HashMap<Integer,Set<Set<Constraint>>> map = new HashMap<Integer,Set<Set<Constraint>>>();
+		
+		for (Set<Constraint> confl : conflicts)
+		{
+			Set<Set<Constraint>> conflictsWithThatSize = map.get(confl.size());
+			if (conflictsWithThatSize == null)
+				conflictsWithThatSize = new HashSet<Set<Constraint>>();
+			
+			conflictsWithThatSize.add(confl);
+			map.put(confl.size(), conflictsWithThatSize);
+		}
+		
+		List<Integer> cardinality = new LinkedList<Integer>(map.keySet());
+		Collections.sort(cardinality);
+	
+		
+		List<Set<Constraint>> sortedList = new LinkedList<Set<Constraint>>();
+		
+		for (int card : cardinality)
+		{
+			sortedList.addAll(map.get(card));
+		}
+	
+
+		for (Set<Constraint> conflictSet : sortedList) {
+
+			if(diagnoses.isEmpty())
+			{
+				//enter the first conflict set (must be smallest!!) as a diagnosis each
+				for (Constraint con : conflictSet)
+				{
+					HashSet<Constraint> conflicts = new HashSet<Constraint>();
+					conflicts.add(con);
+					diagnoses.add(conflicts);
+				}
+			}
+			else
+			{
+				//HashSet<Set<Constraint>> diagnosesCopy = new HashSet<Set<Constraint>>(diagnoses);
+				
+				HashSet<Set<Constraint>> newDiags = new HashSet<Set<Constraint>>();
+
+				//see if already contained in current diagnosis
+				for (Set<Constraint> diag : diagnoses)
+				{
+					Set<Constraint> copy = new HashSet<Constraint>(conflictSet);
+					
+					//keeps all elements also occuring in diagnosis
+					copy.retainAll(diag);
+					
+					if (copy.isEmpty())
+					{
+
+						//contains no elements already occuring in the diagnosis 
+						// therefore, we add each element of the conflict it to the diagnosis
+						for (Constraint con : conflictSet)
+						{
+							Set<Constraint> originalDiagnosis = new HashSet<Constraint>(diag);
+							originalDiagnosis.add(con);
+							
+							boolean contained = false;
+							//check if new diagnosis isn't contained by any other diags
+							for (Set<Constraint> otherDiag : diagnoses)
+							{
+								if(!otherDiag.equals(diag))
+								{
+									Set<Constraint> otherDiagCopy = new HashSet<Constraint>(otherDiag);
+
+									otherDiagCopy.removeAll(originalDiagnosis);
+									
+									if (otherDiagCopy.isEmpty())
+									{
+										//do not add it to the diagnoses!
+										contained = true;
+										break;
+									}
+								}
+							}
+							
+							if (!contained)
+								newDiags.add(originalDiagnosis);
+						}
+					}
+					else
+					{
+						newDiags.add(diag);
+					}
+				}
+				
+				diagnoses = newDiags;
+				
+			}
+		}
 	}
 	
 	private void calculateDiagnoses() {
@@ -20,7 +124,9 @@ public class DiagnoseCalculator {
 		//initialize empty diagnoses
 		diagnoses = new HashSet<Set<Constraint>>();
 		
+
 		for (Set<Constraint> conflictSet : conflicts) {
+						
 			if (diagnoses.isEmpty()) {
 				//first conflictSet
 				//->add each constraint as diagnose
@@ -29,6 +135,7 @@ public class DiagnoseCalculator {
 					diagnose.add(constraint);
 					diagnoses.add(diagnose);
 				}
+				
 			} else {
 				//each further conflictSet
 				//build up new diagnose based on current diagnoses
@@ -60,6 +167,7 @@ public class DiagnoseCalculator {
 				}
 				//set diagnose to newDiagnoses
 				diagnoses = newDiagnoses;
+
 			}
 		}
 	}
@@ -69,10 +177,12 @@ public class DiagnoseCalculator {
 	}
 
 	public boolean isDiagnose(Set<Constraint> diagnose) {
+				
 		return diagnoses.contains(diagnose);
 	}
 
 	public int getNumberOfDiagnoses() {
+		
 		return diagnoses.size();
 	}
 }

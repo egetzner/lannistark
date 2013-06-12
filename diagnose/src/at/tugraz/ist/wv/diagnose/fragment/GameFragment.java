@@ -84,51 +84,6 @@ public class GameFragment extends Fragment implements AlertDialog.OnClickListene
         //handle input
         diagnoseSet = new HashSet<Set<Constraint>>();
         
-        
-        //conflictSet = new HashSet<Set<Constraint>>(ConflictCalculator.calculateConflicts(3, 5, 1,3));
-        
-        /*
-        Set<Constraint> constraints = new HashSet<Constraint>();
-        constraints.add(Constraint.YELLOW);
-        constraints.add(Constraint.RED);
-        conflictSet.add(constraints);
-        constraints = new HashSet<Constraint>();
-        constraints.add(Constraint.BLUE);
-        constraints.add(Constraint.RED);
-        //conflictSet.add(constraints);
-        constraints = new HashSet<Constraint>();
-        constraints.add(Constraint.RED);
-        constraints.add(Constraint.BLUE);
-        conflictSet.add(constraints);
-        constraints = new HashSet<Constraint>();
-        constraints.add(Constraint.YELLOW);
-        constraints.add(Constraint.GREEN);
-        conflictSet.add(constraints);
-        constraints = new HashSet<Constraint>();
-        constraints.add(Constraint.BLACK);
-        conflictSet.add(constraints);
-		*/
-        
-        /*
-        Set<Constraint> constraints = new HashSet<Constraint>();
-        constraints.add(Constraint.GREEN);
-        constraints.add(Constraint.BLACK);
-        constraints.add(Constraint.RED);
-        conflictSet.add(constraints);
-        constraints = new HashSet<Constraint>();
-        constraints.add(Constraint.BLUE);
-        constraints.add(Constraint.CYAN);
-        constraints.add(Constraint.MAGENTA);
-        constraints.add(Constraint.WHITE);
-        //conflictSet.add(constraints);
-        constraints = new HashSet<Constraint>();
-        constraints.add(Constraint.YELLOW);
-        constraints.add(Constraint.GREEN);
-        constraints.add(Constraint.WHITE);
-        conflictSet.add(constraints);
-        
-        */
-        
 	    	//handle other input data
 	    numTries = 0;
 	    numGuessed = 0;
