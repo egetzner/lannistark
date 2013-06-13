@@ -128,6 +128,12 @@ public class LevelManager {
 		
 		return new GameLevel(levelCounter++, conflicts);
 	}
+	
+	public GameLevel getNewLevel(int i) {
+
+		levelCounter = i;
+		return getNewLevel();
+	}
 
 	public int getLevelCounter() {
 		return levelCounter;
@@ -156,5 +162,7 @@ public class LevelManager {
 	public void addToNumPossibleDiags(int numPossibleDiags) {
 		this.numPossibleDiags += numPossibleDiags;
 	}
+
+
 
 }

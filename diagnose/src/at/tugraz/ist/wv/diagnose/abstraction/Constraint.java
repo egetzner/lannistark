@@ -17,6 +17,16 @@ public enum Constraint {
 		this.active = true;
 	}
 	
+	public static Constraint createConstraint(String constraint) {
+		for (Constraint con : getAllConstraints())
+		{
+			if (con.toString().equals(constraint))
+				return con;
+		}
+		
+		return null;
+	}
+	
 	public void activate() {
 		this.active = true;
 	}

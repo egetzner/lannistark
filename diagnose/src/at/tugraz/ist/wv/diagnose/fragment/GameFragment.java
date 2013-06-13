@@ -202,7 +202,7 @@ public class GameFragment extends Fragment implements AlertDialog.OnClickListene
     }
     
     private void updateTextInformation() {
-    	textviewDiagnoses.setText(level.getCurrentDiagnoses().size() + "/" + level.getTargetDiagnoses().size());
+    	textviewDiagnoses.setText(level.getCurrentDiagnoses(	).size() + "/" + level.getTargetDiagnoses().size());
     	if (gametype == GAMETYPE_LEVEL_COMPLETION) {
 	    	textviewTries.setText(String.valueOf(level.getNumTries()));
 	    	textviewBest.setText(String.valueOf(level.getNumTriesBest()));

@@ -1,6 +1,7 @@
 package at.tugraz.ist.wv.diagnose.abstraction;
 
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -18,7 +19,7 @@ public class GameLevel {
 	
 	//gamestate
 	private int numTries;
-	private Set<Set<Constraint>> currentDiagnoses;
+	private ConstraintSuperSet currentDiagnoses;
 	
 	public GameLevel(int num, List<Set<Constraint>> conflicts) {
 		//acquire input data
@@ -39,7 +40,29 @@ public class GameLevel {
 		
 		//initialize gamestate
 		numTries = 0;
-		currentDiagnoses = new HashSet<Set<Constraint>>();
+		currentDiagnoses = new ConstraintSuperSet();
+	}
+
+	public GameLevel(int num, String constraints, String diagnoses, int highscore, int tries) {
+
+		this.levelNum = num;
+		this.conflicts = new LinkedList<Set<Constraint>>(
+						new ConstraintSuperSet(constraints));
+		numTriesBest = highscore;
+		
+		//calculate target
+		DiagnoseCalculator diagnosisCalculator = new DiagnoseCalculator(new HashSet<Set<Constraint>>(conflicts));
+		targetDiagnoses = diagnosisCalculator.getDiagnoses();
+
+		//calculate constraints
+		availableConstraints = new HashSet<Constraint>();
+		for(Set<Constraint> temp : conflicts)
+			availableConstraints.addAll(temp);
+
+		//initialize gamestate
+		numTries = 0;
+		currentDiagnoses = new ConstraintSuperSet(diagnoses);
+
 	}
 
 	/*
@@ -69,7 +92,7 @@ public class GameLevel {
 	 * GETTERS FOR GAMESTATE
 	 */
 	public Set<Set<Constraint>> getCurrentDiagnoses() {
-		return currentDiagnoses;
+		return new HashSet<Set<Constraint>>(currentDiagnoses);
 	}
 	
 	public int getNumTries() {
@@ -95,5 +118,17 @@ public class GameLevel {
 
 	public boolean isComplete() {
 		return (currentDiagnoses.size() == targetDiagnoses.size());
+	}
+
+	public void reset() {
+		
+		for (Constraint con : availableConstraints)
+		{
+			con.activate();
+		}
+		
+		//initialize gamestate
+		numTries = 0;
+		currentDiagnoses = new ConstraintSuperSet();		
 	}
 }

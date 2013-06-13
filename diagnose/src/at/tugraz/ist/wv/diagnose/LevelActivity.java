@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import at.tugraz.ist.wv.diagnose.abstraction.GameLevel;
 import at.tugraz.ist.wv.diagnose.abstraction.LevelManager;
+import at.tugraz.ist.wv.diagnose.db.DBProxy;
 import at.tugraz.ist.wv.diagnose.fragment.GameFragment;
 import at.tugraz.ist.wv.diagnose.fragment.GameFragment.OnGameCompletedListener;
 
@@ -25,25 +26,32 @@ public class LevelActivity extends FragmentActivity implements OnGameCompletedLi
 	LevelManager manager;
 	GameLevel gameLevel;
 	GameFragment fragment;
+	DBProxy proxy;
+	
+	ImageView prev;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_level);
 		
+		proxy = new DBProxy(this);
+		
 		//prepare game fragment
 		manager = new LevelManager();
 		gameLevel = manager.getNewLevel();
-		fragment = GameFragment.newInstance(gameLevel, GameFragment.GAMETYPE_LEVEL_COMPLETION);
 		
-		//show game fragment
-		FragmentManager fragmentManager = getSupportFragmentManager();
-		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-		fragmentTransaction.add(R.id.fragment_container, fragment);
-		fragmentTransaction.commit();
+		proxy.addNewLevel(gameLevel);
+		proxy.dumpTables();
+
+		level = (TextView) findViewById(R.id.text_level);
+	
+		points = (TextView) findViewById(R.id.text_points);
+		points.setText("Points: " + manager.getNumCorrectDiags() + "/" + manager.getNumPossibleDiags());
+
 		
 		ImageView next = (ImageView) findViewById(R.id.icon_navigation_next_item);
-		
+				
 		next.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -52,17 +60,55 @@ public class LevelActivity extends FragmentActivity implements OnGameCompletedLi
 			}
 		});
 		
-		level = (TextView) findViewById(R.id.text_level);
-		level.setText(getResources().getString(R.string.text_level) + manager.getLevelCounter());
-	
-		points = (TextView) findViewById(R.id.text_points);
-		points.setText("Points: " + manager.getNumCorrectDiags() + "/" + manager.getNumPossibleDiags());
+		prev = (ImageView) findViewById(R.id.icon_navigation_previous_item);
+		
+		prev.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				goToLevel(gameLevel.getLevelNum()-1);
+			}
+		});
+		
+		ImageView refresh = (ImageView) findViewById(R.id.icon_navigation_refresh);
+		refresh.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				gameLevel.reset();
+				changeLevel(gameLevel);
+			}
+		});		
+		
+		changeLevel(gameLevel);
 
 	}
-	
-	private void goToNextLevel()
-	{
-		gameLevel = manager.getNewLevel();
+		
+	private void goToLevel(int i) {
+		proxy.updateLevel(gameLevel);
+		
+		System.out.println("num: " + gameLevel.getLevelNum());
+		GameLevel level = proxy.getLevel(i);
+		
+		if (level == null)
+		{
+			level = manager.getNewLevel(i);
+			proxy.addNewLevel(level);
+		}
+		
+		changeLevel(level);
+	}
+
+	private void changeLevel(GameLevel lvl)
+	{		
+		gameLevel = lvl;
+
+		if (gameLevel.getLevelNum() <= 1)
+			prev.setClickable(false);
+		else
+			prev.setClickable(true);
+		
 		fragment = GameFragment.newInstance(gameLevel, GameFragment.GAMETYPE_LEVEL_COMPLETION);
 		
 		FragmentManager fragmentManager = getSupportFragmentManager();
@@ -70,8 +116,8 @@ public class LevelActivity extends FragmentActivity implements OnGameCompletedLi
 		fragmentTransaction.add(R.id.fragment_container, fragment);
 		fragmentTransaction.commit();
 		
-		level.setText(getResources().getString(R.string.text_level) + manager.getLevelCounter());
-		//TODO: reset star
+		level.setText(getResources().getString(R.string.text_level) + gameLevel.getLevelNum());
+
 	}
 	
 	
@@ -88,8 +134,8 @@ public class LevelActivity extends FragmentActivity implements OnGameCompletedLi
 		manager.addToNumTries(gameLevel.getNumTries());
 		manager.addToNumCorrectDiags(gameLevel.getCurrentDiagnoses().size());
 		manager.addToNumPossibleDiags(gameLevel.getTargetDiagnoses().size());
-		points.setText("Points: " + manager.getNumCorrectDiags() + "/" + manager.getNumPossibleDiags());
-
+		points.setText("Points: " + manager.getNumCorrectDiags() + "/" + manager.getNumPossibleDiags());	
+		
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
 		// 2. Chain together various setter methods to set the dialog characteristics
@@ -106,7 +152,7 @@ public class LevelActivity extends FragmentActivity implements OnGameCompletedLi
 				
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					goToNextLevel();
+		        	   goToLevel(gameLevel.getLevelNum()+1);
 				}
 			});
 
@@ -119,7 +165,7 @@ public class LevelActivity extends FragmentActivity implements OnGameCompletedLi
 		//next was clicked in the level activity, show dialog
 		//if the current level is completed, skip to the next one
 		if (gameLevel.isComplete()) {
-			goToNextLevel();
+			goToLevel(gameLevel.getLevelNum()+1);
 			return;
 		} 
 		//otherwise show dialog
@@ -129,7 +175,7 @@ public class LevelActivity extends FragmentActivity implements OnGameCompletedLi
 		builder.setNegativeButton("Try Another Time", new DialogInterface.OnClickListener() {
 		           public void onClick(DialogInterface dialog, int id) {
 		               // User cancelled the dialog
-		        	   goToNextLevel();
+		        	   goToLevel(gameLevel.getLevelNum()+1);
 		           }
 		       });
 		// Set other dialog properties

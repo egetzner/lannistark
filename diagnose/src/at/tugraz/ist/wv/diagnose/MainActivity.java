@@ -5,14 +5,18 @@ import android.app.Activity;
 import android.content.Intent;
 import android.view.Menu;
 import android.view.View;
+import at.tugraz.ist.wv.diagnose.abstraction.GameLevel;
 import at.tugraz.ist.wv.diagnose.abstraction.LevelManager;
+import at.tugraz.ist.wv.diagnose.db.DBOpenHelper;
 
 public class MainActivity extends Activity {
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
+
 	}
 
 	public void onSubmit(View v) {
