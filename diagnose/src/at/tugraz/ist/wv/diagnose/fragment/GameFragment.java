@@ -213,7 +213,10 @@ public class GameFragment extends Fragment {
     	textviewDiagnoses.setText(level.getCurrentDiagnoses(	).size() + "/" + level.getTargetDiagnoses().size());
     	if (gametype == GAMETYPE_LEVEL_COMPLETION) {
 	    	textviewTries.setText(String.valueOf(level.getNumTries()));
-	    	textviewBest.setText(String.valueOf(level.getNumTriesBest()));
+	    	if (level.getNumTriesBest() == 0)
+	    		textviewBest.setText("-");
+	    	else
+	    		textviewBest.setText(String.valueOf(level.getNumTriesBest()));
     	} 
     	if (gametype == GAMETYPE_TIME_BASIC) {
 	    	textviewTries.setText(String.valueOf(gametypeTimingBasicInformationSupplier.getNumCompletedLevels()));

@@ -30,6 +30,7 @@ public class MainActivity extends Activity {
 	public void onBtnClearDB(View v) {
 		DBProxy proxy = new DBProxy(this);
 		proxy.clearDB();
+		proxy.dumpTables();		
 	}
 	
 	@Override

@@ -67,45 +67,10 @@ public class DBProxy {
 		closeReadableDatabase();
 		closeWritableDatabase();
 	}
-	
-	
-	public String getConstraintSet(int id, String col_name)
-	{
-		SQLiteDatabase db = this.getReadableDatabase();    
-	    
-		Cursor cursor = db.query(
-				DBContract.Levels.TABLE_NAME, 
-				new String[] { col_name },
-				//BContract.Levels.COL_LVL+"=?",
-				null,
-				new String[] { /*String.valueOf(id)*/ },
-				null, null, null, null);
 		
-		String ret = "nothin'";
-		
-		if (cursor != null)
-		{
-			System.out.println(cursor.getColumnCount() + " " + cursor.getCount());
-
-			if (cursor.moveToFirst())
-				ret = cursor.getString(0);
-			
-			cursor.close();
-		}
-		else
-			System.out.println("cursor is null?!");
-
-		//dbHelper.close();
-
-		closeReadableDatabase();
-	    return ret;
-	}
-	
     // Adding new contact
 	public void addNewLevel(GameLevel level) {
-		
-		//TODO: see if level exists already!!
-		
+				
 	    SQLiteDatabase db = this.getWritableDatabase();
 	 
 	    ContentValues values = new ContentValues();
@@ -118,7 +83,6 @@ public class DBProxy {
 		
 		System.err.println(id);
 
-		//dbHelper.close();
 		closeWritableDatabase();
 	}
 
@@ -193,7 +157,7 @@ public class DBProxy {
 	    values.put(DBContract.Levels.COL_DIAG, gameLevel.getCurrentDiagnoses().toString());
 		values.put(DBContract.Levels.COL_SCORE, gameLevel.getNumTries());
 	    
-		if (gameLevel.getNumTries() > gameLevel.getNumTriesBest())
+		if (gameLevel.isComplete() && gameLevel.getNumTries() > gameLevel.getNumTriesBest())
 			values.put(DBContract.Levels.COL_HIGHSCORE, gameLevel.getNumTries());
 		// Updating Row
 		long id = db.update(DBContract.Levels.TABLE_NAME, values, DBContract.Levels.COL_LVL + "=?",
@@ -202,8 +166,86 @@ public class DBProxy {
 		System.err.println(id);
 
 		//dbHelper.close();
-		closeWritableDatabase();
+		closeWritableDatabase();	
+	}
+	
+	public void updateScoreForTiming(int difficulty_level, int numLevels, int numSeconds)
+	{
+		SQLiteDatabase db = this.getWritableDatabase();    
+	    
+		Cursor cursor = db.query(
+				DBContract.TimeLevel.TABLE_NAME, 
+				new String[] { 
+						DBContract.TimeLevel._ID, 
+						},
+				DBContract.TimeLevel.COL_DIFF+"=?",
+				new String[] { String.valueOf(difficulty_level) },
+				null, null, null, null);
+
+		int id = -1;
+		if (cursor != null)
+		{
+			//move to the last possible entry
+			if (cursor.moveToLast())
+			{
+				id = cursor.getInt(0);
+			}
+			cursor.close();
+		}
+
 		
+	    ContentValues values = new ContentValues();
+	    values.put(DBContract.TimeLevel.COL_DIFF, difficulty_level); 
+	    values.put(DBContract.TimeLevel.COL_NUM_LEVELS, numLevels);
+		values.put(DBContract.TimeLevel.COL_SECONDS, numSeconds);
+
+		
+		if (id > 0)
+		{
+			// Updating Row
+			db.update(DBContract.TimeLevel.TABLE_NAME, values, DBContract.TimeLevel._ID + "=?",
+					new String[] {String.valueOf(id)});
+		}
+		else
+			db.insert(DBContract.TimeLevel.TABLE_NAME, null, values);
+		
+		closeWritableDatabase();
+	}
+	
+	public int[] getScoreForTiming(int difficulty_level)
+	{
+		SQLiteDatabase db = this.getReadableDatabase();    
+	    
+		Cursor cursor = db.query(
+				DBContract.TimeLevel.TABLE_NAME, 
+				new String[] { 
+						DBContract.TimeLevel.COL_NUM_LEVELS, 
+						DBContract.TimeLevel.COL_SECONDS
+						},
+				DBContract.TimeLevel.COL_DIFF+"=?",
+				new String[] { String.valueOf(difficulty_level) },
+				null, null, null, null);
+				
+		int[] score = new int[2];
+		
+		if (cursor != null)
+		{
+			//move to the last possible entry
+			if (cursor.moveToLast())
+			{
+				score[0] = cursor.getInt(0);
+				score[1] = cursor.getInt(1);
+			}
+			
+			cursor.close();
+		}
+		else
+			System.out.println("cursor is null!");
+
+		//dbHelper.close();
+
+		closeReadableDatabase();
+	    return score;
 	}
 
 	public void clearDB() {

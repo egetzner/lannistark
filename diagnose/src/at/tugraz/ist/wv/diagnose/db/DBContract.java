@@ -51,17 +51,16 @@ public abstract class DBContract {
 				TimeLevel._ID + 			TYPE_PRIMARY_KEY + 	COMMA_SEP + 
 				TimeLevel.COL_DIFF + 		TYPE_INTEGER + 		COMMA_SEP + 
 				TimeLevel.COL_NUM_LEVELS + 		TYPE_INTEGER + 		COMMA_SEP + 
-				TimeLevel.COL_SECONDS + 		TYPE_INTEGER + 		COMMA_SEP +
-
+				TimeLevel.COL_SECONDS + 		TYPE_INTEGER + 
 				" )"
-
+		,
 	    };
 	
 
 	public static final String[] SQL_DELETE_ENTRIES = new String[] {
 		//Table Game
 	    "DROP TABLE IF EXISTS " + DBContract.Levels.TABLE_NAME,
-	    "DROP TABLE IF EXISTS " + DBContract.TimeLevel.TABLE_NAME,
+	    " DROP TABLE IF EXISTS " + DBContract.TimeLevel.TABLE_NAME,
 
 	};
 	

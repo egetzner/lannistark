@@ -1,17 +1,14 @@
 package at.tugraz.ist.wv.diagnose.db;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import at.tugraz.ist.wv.diagnose.abstraction.GameLevel;
 
 public class DBOpenHelper extends SQLiteOpenHelper{
 
 	// All Static variables
 	// Database Version
-	private static final int DATABASE_VERSION = 4;
+	private static final int DATABASE_VERSION = 6;
 
 	// Database Name
 	private static final String DATABASE_NAME = "mhs";
@@ -42,6 +39,9 @@ public class DBOpenHelper extends SQLiteOpenHelper{
 	
 	public void reinitialize(SQLiteDatabase db)
 	{
+		
+		System.out.println("reinit");
+		
     	for (String query : DBContract.SQL_DELETE_ENTRIES) 
     		db.execSQL(query);
 

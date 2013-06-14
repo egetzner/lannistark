@@ -1,14 +1,11 @@
 package at.tugraz.ist.wv.diagnose;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -123,7 +120,7 @@ public class LevelActivity extends FragmentActivity implements OnGameCompletedLi
 		else
 			prev.setClickable(true);
 		
-		solve.setEnabled(true);
+		solve.setEnabled(!gameLevel.isComplete());
 		
 		fragment = GameFragment.newInstance(gameLevel, GameFragment.GAMETYPE_LEVEL_COMPLETION);
 		
@@ -162,10 +159,22 @@ public class LevelActivity extends FragmentActivity implements OnGameCompletedLi
 	
 	private void showEndGameDialog()
 	{
+		
+		String header = "Congratulations!";
+		String message = "You completed the level in " + gameLevel.getNumTries() + ((gameLevel.getNumTries()>1)?" tries!":" try!");
+		
+		if (gameLevel.getNumTriesBest() > 0 && gameLevel.getNumTries() < gameLevel.getNumTriesBest())
+		{
+			header = "New High Score!";
+			message = "Congratulations! You completed the level in " + gameLevel.getNumTries() + 
+					" tries, the highscore was " + gameLevel.getNumTriesBest() +"!";
+		}
+				
 		AlertDialog dialog = AlertDialogManager.showAlertDialog(
 				this, 
-				"Congratulations!",
-				"You completed the level in " + gameLevel.getNumTries() + " tries!");
+				header,
+				message
+				);
 		
 
 		dialog.setButton(AlertDialog.BUTTON_POSITIVE, 
@@ -186,9 +195,7 @@ public class LevelActivity extends FragmentActivity implements OnGameCompletedLi
 					public void onClick(DialogInterface dialog, int which) {
 						System.out.println("backToGame");
 					}
-				});
-	
-		
+				});	
 
 		dialog.show();
 	}
