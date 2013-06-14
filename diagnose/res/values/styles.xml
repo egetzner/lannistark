@@ -16,7 +16,7 @@
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
-    
+        
     <style name="text">
         <item name="android:typeface">sans</item>
         <item name="android:textSize">18sp</item>

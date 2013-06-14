@@ -20,7 +20,7 @@ public class LevelManager {
 	private static final int MAX_CONFLICTS = 8;
 	
 	public void resetLevels() {
-		levelCounter = 0;
+		levelCounter = 1;
 		numCorrectDiags = 0;
 		numTries = 0;
 		numPossibleDiags = 0;	

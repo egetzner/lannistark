@@ -1,13 +1,14 @@
 package at.tugraz.ist.wv.diagnose;
 
-import java.util.logging.Level;
-
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -23,6 +24,7 @@ public class LevelActivity extends FragmentActivity implements OnGameCompletedLi
 
 	TextView level;
 	TextView points;
+	View solve;
 	LevelManager manager;
 	GameLevel gameLevel;
 	GameFragment fragment;
@@ -56,7 +58,7 @@ public class LevelActivity extends FragmentActivity implements OnGameCompletedLi
 			
 			@Override
 			public void onClick(View v) {
-				displaySolveDialog();
+				goToLevel(gameLevel.getLevelNum()+1);
 			}
 		});
 		
@@ -80,6 +82,18 @@ public class LevelActivity extends FragmentActivity implements OnGameCompletedLi
 				changeLevel(gameLevel);
 			}
 		});		
+		
+		
+		solve = findViewById(R.id.text_solve2);
+		solve.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				//show dialog
+				displaySolveDialog();
+			}
+		});
+		
 		
 		changeLevel(gameLevel);
 
@@ -109,13 +123,15 @@ public class LevelActivity extends FragmentActivity implements OnGameCompletedLi
 		else
 			prev.setClickable(true);
 		
+		solve.setEnabled(true);
+		
 		fragment = GameFragment.newInstance(gameLevel, GameFragment.GAMETYPE_LEVEL_COMPLETION);
 		
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 		fragmentTransaction.add(R.id.fragment_container, fragment);
 		fragmentTransaction.commit();
-		
+					
 		level.setText(getResources().getString(R.string.text_level) + gameLevel.getLevelNum());
 
 	}
@@ -129,64 +145,90 @@ public class LevelActivity extends FragmentActivity implements OnGameCompletedLi
 	}
 
 	@Override
-	public void onGameCompleted() {
+	public void onGameCompleted(boolean solvePressed) {
 		
 		manager.addToNumTries(gameLevel.getNumTries());
 		manager.addToNumCorrectDiags(gameLevel.getCurrentDiagnoses().size());
 		manager.addToNumPossibleDiags(gameLevel.getTargetDiagnoses().size());
 		points.setText("Points: " + manager.getNumCorrectDiags() + "/" + manager.getNumPossibleDiags());	
 		
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		//TODO: what if clicked on solve?
+		if (!solvePressed)
+			showEndGameDialog();
+		
+		solve.setEnabled(false);
 
-		// 2. Chain together various setter methods to set the dialog characteristics
-		builder.setMessage("You completed the level in " + gameLevel.getNumTries() + " tries!")
-		       .setTitle("Congratulations!")
-		       .setNegativeButton("backToGame", new AlertDialog.OnClickListener() {
-				
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					System.out.println("backToGame");
-				}
-			})
-		       .setPositiveButton("nextLevel", new AlertDialog.OnClickListener() {
-				
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-		        	   goToLevel(gameLevel.getLevelNum()+1);
-				}
-			});
+	}
+	
+	private void showEndGameDialog()
+	{
+		AlertDialog dialog = AlertDialogManager.showAlertDialog(
+				this, 
+				"Congratulations!",
+				"You completed the level in " + gameLevel.getNumTries() + " tries!");
+		
 
-		// 3. Get the AlertDialog from create()
-		AlertDialog dialog = builder.create();
+		dialog.setButton(AlertDialog.BUTTON_POSITIVE, 
+				"Next Level", 
+				new AlertDialog.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+			        	   goToLevel(gameLevel.getLevelNum()+1);					
+					}
+				});
+		
+		dialog.setButton(AlertDialog.BUTTON_NEUTRAL, 
+				"Back To Game",
+				new AlertDialog.OnClickListener() {
+			
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						System.out.println("backToGame");
+					}
+				});
+	
+		
+
 		dialog.show();
 	}
 	
+	
 	public void displaySolveDialog() {
-		//next was clicked in the level activity, show dialog
-		//if the current level is completed, skip to the next one
-		if (gameLevel.isComplete()) {
-			goToLevel(gameLevel.getLevelNum()+1);
-			return;
-		} 
-		//otherwise show dialog
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		// Add the buttons
-		builder.setPositiveButton("Solve!", (AlertDialog.OnClickListener) fragment);
-		builder.setNegativeButton("Try Another Time", new DialogInterface.OnClickListener() {
-		           public void onClick(DialogInterface dialog, int id) {
-		               // User cancelled the dialog
-		        	   goToLevel(gameLevel.getLevelNum()+1);
-		           }
-		       });
-		// Set other dialog properties
-		builder.setTitle("Solve or Skip");
-		builder.setMessage("If you click \'Try another Time\', all your diagnoses will be lost. " +
-				"If you click \'Solve!\', the diagnoses will be calculated for you.");
+		
+		System.out.println("Solve btn called");
+		
+		AlertDialog dialog = AlertDialogManager.showAlertDialog(
+				this, 
+				"Calculate Solution",
+				"If you request the solution for this level, " +
+				"you will lose the points for the unguessed diagnoses."
+				);
 
-		// Create the AlertDialog
-		AlertDialog dialog = builder.create();
+		dialog.setButton(AlertDialog.BUTTON_POSITIVE, 
+				"Show Solution", 
+				new AlertDialog.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+			        	   fragment.showSolution();					
+					}
+				});
+		
+		dialog.setButton(AlertDialog.BUTTON_NEUTRAL, 
+				"Back To Game", new AlertDialog.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method stub
+						
+					}
+				});
+	 
 		dialog.show();
 	}
+
+
 
 
 }
