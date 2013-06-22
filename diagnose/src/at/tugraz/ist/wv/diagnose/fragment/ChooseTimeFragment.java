@@ -12,27 +12,31 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import at.tugraz.ist.wv.diagnose.ChooseTimeGameActivity;
 import at.tugraz.ist.wv.diagnose.R;
+import at.tugraz.ist.wv.diagnose.abstraction.Difficulty;
 
 public class ChooseTimeFragment extends Fragment implements OnClickListener{
 
 	//information
 	private Cursor highscoreCursor;
+	private Difficulty difficulty;
 	
 	//textviews
 	TextView textviewHighscoreShort;
 	TextView textviewHighscoreNormal;
 	TextView textviewHighscoreLengthy;
 	TextView textviewHighscoreLong;
+	TextView textviewDifficulty;
 	
-	//callback for chosen time event
+	//activity callbacks for events 
 	OnTimeChosenListener onTimeChosenListener;
+	OnDifficultyTappedListener onDifficultyTappedListener;
 	
     /*
      * Construction interface
      */
-    public static ChooseTimeFragment newInstance() {
+    public static ChooseTimeFragment newInstance(Difficulty difficulty) {
     	ChooseTimeFragment f = new ChooseTimeFragment();
-    	f.initializeFragment();
+    	f.initializeFragment(difficulty);
         return f;
     }
     
@@ -48,11 +52,19 @@ public class ChooseTimeFragment extends Fragment implements OnClickListener{
         textviewHighscoreLengthy = (TextView) layout.findViewById(R.id.text_highscore_lengthy);
         textviewHighscoreLong    = (TextView) layout.findViewById(R.id.text_highscore_long);
 
-        //bind onClick listeners
-        layout.findViewById(R.id.text_label_time_short).setOnClickListener(this);
-        layout.findViewById(R.id.text_label_time_normal).setOnClickListener(this);
-        layout.findViewById(R.id.text_label_time_lengthy).setOnClickListener(this);
-        layout.findViewById(R.id.text_label_time_long).setOnClickListener(this);
+        //bind onClick listeners for time items
+        layout.findViewById(R.id.layout_time_short).setOnClickListener(new OnItemClickedListener(0));
+        layout.findViewById(R.id.layout_time_normal).setOnClickListener(new OnItemClickedListener(1));
+        layout.findViewById(R.id.layout_time_lengthy).setOnClickListener(new OnItemClickedListener(2));
+        layout.findViewById(R.id.layout_time_long).setOnClickListener(new OnItemClickedListener(3));
+        
+        //bind onClick listener for difficulty labels
+        layout.findViewById(R.id.layout_difficulty).setOnClickListener(this);
+        
+        //show difficulty
+        textviewDifficulty = (TextView) layout.findViewById(R.id.text_difficulty);
+        textviewDifficulty.setText(difficulty.getText());
+        textviewDifficulty.setTextColor(getResources().getColor(difficulty.getColor()));
         
         //set highscoreCursor to null
         highscoreCursor = null;
@@ -65,13 +77,20 @@ public class ChooseTimeFragment extends Fragment implements OnClickListener{
 		public void onTimeChosen(int time);
 	}
 	
+	public interface OnDifficultyTappedListener {
+		public void onDifficultyTapped();
+	}
+	
+	
+	
 	@Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         try {
         	onTimeChosenListener = (OnTimeChosenListener) activity;
+        	onDifficultyTappedListener = (OnDifficultyTappedListener) activity;
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString() + " must implement OnTimeChosenListener");
+            throw new ClassCastException(activity.toString() + " must implement OnTimeChosenListener and OnDifficultyTappedListener");
         }
     }
     
@@ -87,18 +106,29 @@ public class ChooseTimeFragment extends Fragment implements OnClickListener{
     		highscoreCursor.close();
     		highscoreCursor = null;
     	}
+    	super.onStop();
     }
 
-    public void initializeFragment() {
-    	//nothing to do here
+    public void initializeFragment(Difficulty difficulty) {
+    	this.difficulty = difficulty;
+    }
+    
+    public class OnItemClickedListener implements OnClickListener {
+    	
+    	public int id;
+    	
+    	public OnItemClickedListener(int id) {
+    		this.id = id;
+    	}
+		
+    	@Override
+		public void onClick(View view) {
+			onTimeChosenListener.onTimeChosen(id);
+		}
     }
     
 	@Override
 	public void onClick(View view) {
-		//clicked on a gametype -> start game
-		TextView textView = (TextView) view;
-		ChooseTimeGameActivity activity = (ChooseTimeGameActivity) getActivity();
-		int difficulty = activity.getDifficulty();
-		System.out.println("started game from view with text " + textView.getText() + " and difficulty " + difficulty);
+		onDifficultyTappedListener.onDifficultyTapped();
 	}
 }

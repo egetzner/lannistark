@@ -10,14 +10,18 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 import android.annotation.TargetApi;
 import android.os.Build;
+import at.tugraz.ist.wv.diagnose.abstraction.Difficulty;
+import at.tugraz.ist.wv.diagnose.fragment.ChooseDifficultyFragment;
+import at.tugraz.ist.wv.diagnose.fragment.ChooseDifficultyFragment.OnDifficultyChosenListener;
 import at.tugraz.ist.wv.diagnose.fragment.ChooseTimeFragment;
+import at.tugraz.ist.wv.diagnose.fragment.ChooseTimeFragment.OnDifficultyTappedListener;
 import at.tugraz.ist.wv.diagnose.fragment.ChooseTimeFragment.OnTimeChosenListener;
 
-public class ChooseTimeGameActivity extends FragmentActivity implements OnTimeChosenListener {
+public class ChooseTimeGameActivity extends FragmentActivity implements OnTimeChosenListener, OnDifficultyTappedListener, OnDifficultyChosenListener {
 
 	public static final String CHOOSETIMEGAMEACTIVITY_KEY_DIFFICULTY = "DIFFICULTY";
 	
-	private int difficulty;
+	private Difficulty difficulty;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -27,24 +31,49 @@ public class ChooseTimeGameActivity extends FragmentActivity implements OnTimeCh
 		
 		//set initial difficulty
 		if (savedInstanceState != null && savedInstanceState.containsKey(CHOOSETIMEGAMEACTIVITY_KEY_DIFFICULTY))
-			difficulty = savedInstanceState.getInt(CHOOSETIMEGAMEACTIVITY_KEY_DIFFICULTY);
+			difficulty = Difficulty.getDifficulty(savedInstanceState.getInt(CHOOSETIMEGAMEACTIVITY_KEY_DIFFICULTY));
 		else
-			difficulty = 0; //TODO: create difficulty constants in level or levelManager and use those
+			difficulty = Difficulty.EASY; //TODO: create difficulty constants in level or levelManager and use those
 		
 		//create initial fragment
-		Fragment fragment = ChooseTimeFragment.newInstance();
+		Fragment fragment = ChooseTimeFragment.newInstance(difficulty);
 		
-		//show game fragment
+		//show initial fragment
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 		fragmentTransaction.add(R.id.fragment_container, fragment);
 		fragmentTransaction.commit();
 	}
 	
-	public int getDifficulty() {
-		return difficulty;
+	@Override
+	public void onTimeChosen(int time) {
+		System.out.println("started game from view with time identifier " + time);
 	}
-
+	
+	@Override
+	public void onDifficultyTapped() {
+		System.out.println("switch to choosedifficulty fragment");
+		Fragment fragment = ChooseDifficultyFragment.newInstance();
+		
+		FragmentManager fragmentManager = getSupportFragmentManager();
+		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+		fragmentTransaction.replace(R.id.fragment_container, fragment);
+		fragmentTransaction.commit();
+	}
+	
+	@Override
+	public void onDifficultyChosen(Difficulty difficulty) {
+		this.difficulty = difficulty;
+		
+		//create new fragment
+		Fragment fragment = ChooseTimeFragment.newInstance(difficulty);
+		
+		//show choose time fragment
+		FragmentManager fragmentManager = getSupportFragmentManager();
+		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+		fragmentTransaction.replace(R.id.fragment_container, fragment);
+		fragmentTransaction.commit();
+	}
 	
 	
 	/*
@@ -85,9 +114,4 @@ public class ChooseTimeGameActivity extends FragmentActivity implements OnTimeCh
 		return super.onOptionsItemSelected(item);
 	}
 
-	@Override
-	public void onTimeChosen(int time) {
-		// TODO Auto-generated method stub
-		
-	}
 }
