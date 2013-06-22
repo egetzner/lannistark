@@ -20,7 +20,7 @@ public class LevelManager {
 	private static final int MAX_CONFLICTS = 8;
 	
 	public void resetLevels() {
-		levelCounter = 0;
+		levelCounter = 1;
 		numCorrectDiags = 0;
 		numTries = 0;
 		numPossibleDiags = 0;	
@@ -128,6 +128,12 @@ public class LevelManager {
 		
 		return new GameLevel(levelCounter++, conflicts);
 	}
+	
+	public GameLevel getNewLevel(int i) {
+
+		levelCounter = i;
+		return getNewLevel();
+	}
 
 	public int getLevelCounter() {
 		return levelCounter;
@@ -156,5 +162,7 @@ public class LevelManager {
 	public void addToNumPossibleDiags(int numPossibleDiags) {
 		this.numPossibleDiags += numPossibleDiags;
 	}
+
+
 
 }

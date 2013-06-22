@@ -23,7 +23,7 @@ import at.tugraz.ist.wv.diagnose.abstraction.GameLevel;
 import at.tugraz.ist.wv.diagnose.adapter.ConstraintAdapter;
 import at.tugraz.ist.wv.diagnose.adapter.ConstraintListAdapter;
 
-public class GameFragment extends Fragment implements AlertDialog.OnClickListener {
+public class GameFragment extends Fragment {
 
 	//error constants
 	public static final int ERROR_DUPLICATE_DIAGNOSE = -1;
@@ -54,7 +54,7 @@ public class GameFragment extends Fragment implements AlertDialog.OnClickListene
     
 	//callback listener for activities
     public interface OnGameCompletedListener {
-		void onGameCompleted();
+		void onGameCompleted(boolean solutionRequested);
     }
     
     //callback for information getters in gametype: GAMETYPE_TIMING_BASIC
@@ -118,6 +118,7 @@ public class GameFragment extends Fragment implements AlertDialog.OnClickListene
         diagnoseListAdapter = new ConstraintListAdapter(getActivity(), level.getCurrentDiagnoses(), false);
         diagnoseList.setAdapter(diagnoseListAdapter);
         
+        
         //create diagnose grid
         GridView diagnoseGrid = (GridView) layout.findViewById(R.id.gridview_diagnose);
         diagnoseAdapter = new ConstraintAdapter(getActivity(), new HashSet<Constraint>(), false);
@@ -132,7 +133,11 @@ public class GameFragment extends Fragment implements AlertDialog.OnClickListene
         
         //create constraints grid
         GridView constraintsGrid = (GridView) layout.findViewById(R.id.gridview_constraints);
-        constraintAdapter = new ConstraintAdapter(getActivity(), level.getAvailableConstraints(), true);
+        
+        if (level.isComplete())
+        	constraintAdapter = new ConstraintAdapter(getActivity(),new HashSet<Constraint>(), true);
+        else
+        	constraintAdapter = new ConstraintAdapter(getActivity(), level.getAvailableConstraints(), true);
         constraintsGrid.setAdapter(constraintAdapter);
         constraintsGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
@@ -141,6 +146,9 @@ public class GameFragment extends Fragment implements AlertDialog.OnClickListene
             	notifyAdapters();
             }
         });
+        
+        
+
 
         //setup onClick controls
         //clear diagnose
@@ -202,10 +210,13 @@ public class GameFragment extends Fragment implements AlertDialog.OnClickListene
     }
     
     private void updateTextInformation() {
-    	textviewDiagnoses.setText(level.getCurrentDiagnoses().size() + "/" + level.getTargetDiagnoses().size());
+    	textviewDiagnoses.setText(level.getCurrentDiagnoses(	).size() + "/" + level.getTargetDiagnoses().size());
     	if (gametype == GAMETYPE_LEVEL_COMPLETION) {
 	    	textviewTries.setText(String.valueOf(level.getNumTries()));
-	    	textviewBest.setText(String.valueOf(level.getNumTriesBest()));
+	    	if (level.getNumTriesBest() == 0)
+	    		textviewBest.setText("-");
+	    	else
+	    		textviewBest.setText(String.valueOf(level.getNumTriesBest()));
     	} 
     	if (gametype == GAMETYPE_TIME_BASIC) {
 	    	textviewTries.setText(String.valueOf(gametypeTimingBasicInformationSupplier.getNumCompletedLevels()));
@@ -213,37 +224,39 @@ public class GameFragment extends Fragment implements AlertDialog.OnClickListene
     	}
     }
     
-    private void checkGameCompletion() {
-    	if (level.isComplete())
-    		onGameCompletedListener.onGameCompleted();
+    private void setGameCompletion(boolean solve)
+    {
+    	diagnoseAdapter.clear();
+    	constraintAdapter.clear();
+		onGameCompletedListener.onGameCompleted(solve);
     }
     
-	void onSolve()
-	{
+    private void checkGameCompletion() {
+    	if (level.isComplete())
+    		setGameCompletion(false);
+    }
+    
+    
+	public void showSolution() {
 		//TODO: add some sort of penalty, maybe depending on gametype
-		
-    	for (Set<Constraint> diagnose: level.getTargetDiagnoses())
+
+    	for (Set<Constraint> diagnose : level.getTargetDiagnoses())
 		{
-        	if (!level.getCurrentDiagnoses().contains(diagnose)) {
-        		{
-    	    		level.addDiagnose(diagnose);
-    	    		diagnoseListAdapter.addDiagnose(diagnose);
-    	    		checkGameCompletion();
-        		} 
-        	} else {
+        	if (!level.getCurrentDiagnoses().contains(diagnose)) 
+    		{
+        		//do not add the diagnose to the level, as the user didn't guess it himself. 
+        		
+	    		//level.addDiagnose(diagnose);
+	    		diagnoseListAdapter.addDiagnose(diagnose);
+    		} 
+        	else {
         		//no need to do anything, we already have the diagnosis
         	}
 		}
 
-    	diagnoseAdapter.clear();
+    	setGameCompletion(true);
     	notifyAdapters();
     	updateTextInformation();
-		onGameCompletedListener.onGameCompleted();
 	}
 
-	//the solve AlertDialog was accepted
-	@Override
-	public void onClick(DialogInterface arg0, int arg1) {
-		onSolve();
-	}
 }

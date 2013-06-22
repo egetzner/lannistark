@@ -1,7 +1,5 @@
 package at.tugraz.ist.wv.diagnose;
 
-import java.util.logging.Level;
-
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -15,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import at.tugraz.ist.wv.diagnose.abstraction.GameLevel;
 import at.tugraz.ist.wv.diagnose.abstraction.LevelManager;
+import at.tugraz.ist.wv.diagnose.db.DBProxy;
 import at.tugraz.ist.wv.diagnose.fragment.GameFragment;
 import at.tugraz.ist.wv.diagnose.fragment.GameFragment.OnGameCompletedListener;
 
@@ -22,56 +21,116 @@ public class LevelActivity extends FragmentActivity implements OnGameCompletedLi
 
 	TextView level;
 	TextView points;
+	View solve;
 	LevelManager manager;
 	GameLevel gameLevel;
 	GameFragment fragment;
+	DBProxy proxy;
+	
+	ImageView prev;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_level);
 		
+		proxy = new DBProxy(this);
+		
 		//prepare game fragment
 		manager = new LevelManager();
 		gameLevel = manager.getNewLevel();
-		fragment = GameFragment.newInstance(gameLevel, GameFragment.GAMETYPE_LEVEL_COMPLETION);
 		
-		//show game fragment
-		FragmentManager fragmentManager = getSupportFragmentManager();
-		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-		fragmentTransaction.add(R.id.fragment_container, fragment);
-		fragmentTransaction.commit();
-		
-		ImageView next = (ImageView) findViewById(R.id.icon_navigation_next_item);
-		
-		next.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				displaySolveDialog();
-			}
-		});
-		
+		proxy.addNewLevel(gameLevel);
+		proxy.dumpTables();
+
 		level = (TextView) findViewById(R.id.text_level);
-		level.setText(getResources().getString(R.string.text_level) + manager.getLevelCounter());
 	
 		points = (TextView) findViewById(R.id.text_points);
 		points.setText("Points: " + manager.getNumCorrectDiags() + "/" + manager.getNumPossibleDiags());
 
+		
+		ImageView next = (ImageView) findViewById(R.id.icon_navigation_next_item);
+				
+		next.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				goToLevel(gameLevel.getLevelNum()+1);
+			}
+		});
+		
+		prev = (ImageView) findViewById(R.id.icon_navigation_previous_item);
+		
+		prev.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				goToLevel(gameLevel.getLevelNum()-1);
+			}
+		});
+		
+		ImageView refresh = (ImageView) findViewById(R.id.icon_navigation_refresh);
+		refresh.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				gameLevel.reset();
+				changeLevel(gameLevel);
+			}
+		});		
+		
+		
+		solve = findViewById(R.id.text_solve2);
+		solve.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				//show dialog
+				displaySolveDialog();
+			}
+		});
+		
+		
+		changeLevel(gameLevel);
+
 	}
-	
-	private void goToNextLevel()
-	{
-		gameLevel = manager.getNewLevel();
+		
+	private void goToLevel(int i) {
+		proxy.updateLevel(gameLevel);
+		
+		System.out.println("num: " + gameLevel.getLevelNum());
+		GameLevel level = proxy.getLevel(i);
+		
+		if (level == null)
+		{
+			level = manager.getNewLevel(i);
+			proxy.addNewLevel(level);
+		}
+		
+		changeLevel(level);
+	}
+
+	private void changeLevel(GameLevel lvl)
+	{		
+		gameLevel = lvl;
+
+		if (gameLevel.getLevelNum() <= 1)
+			prev.setClickable(false);
+		else
+			prev.setClickable(true);
+		
+		solve.setEnabled(!gameLevel.isComplete());
+		
 		fragment = GameFragment.newInstance(gameLevel, GameFragment.GAMETYPE_LEVEL_COMPLETION);
 		
 		FragmentManager fragmentManager = getSupportFragmentManager();
 		FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 		fragmentTransaction.add(R.id.fragment_container, fragment);
 		fragmentTransaction.commit();
-		
-		level.setText(getResources().getString(R.string.text_level) + manager.getLevelCounter());
-		//TODO: reset star
+					
+		level.setText(getResources().getString(R.string.text_level) + gameLevel.getLevelNum());
+
 	}
 	
 	
@@ -83,64 +142,100 @@ public class LevelActivity extends FragmentActivity implements OnGameCompletedLi
 	}
 
 	@Override
-	public void onGameCompleted() {
+	public void onGameCompleted(boolean solvePressed) {
 		
 		manager.addToNumTries(gameLevel.getNumTries());
 		manager.addToNumCorrectDiags(gameLevel.getCurrentDiagnoses().size());
 		manager.addToNumPossibleDiags(gameLevel.getTargetDiagnoses().size());
-		points.setText("Points: " + manager.getNumCorrectDiags() + "/" + manager.getNumPossibleDiags());
+		points.setText("Points: " + manager.getNumCorrectDiags() + "/" + manager.getNumPossibleDiags());	
+		
+		//TODO: what if clicked on solve?
+		if (!solvePressed)
+			showEndGameDialog();
+		
+		solve.setEnabled(false);
 
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-		// 2. Chain together various setter methods to set the dialog characteristics
-		builder.setMessage("You completed the level in " + gameLevel.getNumTries() + " tries!")
-		       .setTitle("Congratulations!")
-		       .setNegativeButton("backToGame", new AlertDialog.OnClickListener() {
+	}
+	
+	private void showEndGameDialog()
+	{
+		
+		String header = "Congratulations!";
+		String message = "You completed the level in " + gameLevel.getNumTries() + ((gameLevel.getNumTries()>1)?" tries!":" try!");
+		
+		if (gameLevel.getNumTriesBest() > 0 && gameLevel.getNumTries() < gameLevel.getNumTriesBest())
+		{
+			header = "New High Score!";
+			message = "Congratulations! You completed the level in " + gameLevel.getNumTries() + 
+					" tries, the highscore was " + gameLevel.getNumTriesBest() +"!";
+		}
 				
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					System.out.println("backToGame");
-				}
-			})
-		       .setPositiveButton("nextLevel", new AlertDialog.OnClickListener() {
-				
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-					goToNextLevel();
-				}
-			});
+		AlertDialog dialog = AlertDialogManager.showAlertDialog(
+				this, 
+				header,
+				message
+				);
+		
 
-		// 3. Get the AlertDialog from create()
-		AlertDialog dialog = builder.create();
+		dialog.setButton(AlertDialog.BUTTON_POSITIVE, 
+				"Next Level", 
+				new AlertDialog.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+			        	   goToLevel(gameLevel.getLevelNum()+1);					
+					}
+				});
+		
+		dialog.setButton(AlertDialog.BUTTON_NEUTRAL, 
+				"Back To Game",
+				new AlertDialog.OnClickListener() {
+			
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						System.out.println("backToGame");
+					}
+				});	
+
 		dialog.show();
 	}
 	
+	
 	public void displaySolveDialog() {
-		//next was clicked in the level activity, show dialog
-		//if the current level is completed, skip to the next one
-		if (gameLevel.isComplete()) {
-			goToNextLevel();
-			return;
-		} 
-		//otherwise show dialog
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		// Add the buttons
-		builder.setPositiveButton("Solve!", (AlertDialog.OnClickListener) fragment);
-		builder.setNegativeButton("Try Another Time", new DialogInterface.OnClickListener() {
-		           public void onClick(DialogInterface dialog, int id) {
-		               // User cancelled the dialog
-		        	   goToNextLevel();
-		           }
-		       });
-		// Set other dialog properties
-		builder.setTitle("Solve or Skip");
-		builder.setMessage("If you click \'Try another Time\', all your diagnoses will be lost. " +
-				"If you click \'Solve!\', the diagnoses will be calculated for you.");
+		
+		System.out.println("Solve btn called");
+		
+		AlertDialog dialog = AlertDialogManager.showAlertDialog(
+				this, 
+				"Calculate Solution",
+				"If you request the solution for this level, " +
+				"you will lose the points for the unguessed diagnoses."
+				);
 
-		// Create the AlertDialog
-		AlertDialog dialog = builder.create();
+		dialog.setButton(AlertDialog.BUTTON_POSITIVE, 
+				"Show Solution", 
+				new AlertDialog.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+			        	   fragment.showSolution();					
+					}
+				});
+		
+		dialog.setButton(AlertDialog.BUTTON_NEUTRAL, 
+				"Back To Game", new AlertDialog.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method stub
+						
+					}
+				});
+	 
 		dialog.show();
 	}
+
+
 
 
 }

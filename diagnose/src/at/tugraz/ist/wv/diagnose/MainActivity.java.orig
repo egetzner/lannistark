@@ -17,8 +17,13 @@ public class MainActivity extends Activity {
 
 	}
 
-	public void onSubmit(View v) {				
+<<<<<<< HEAD
+	public void onSubmit(View v) {
     	Intent intent = new Intent(this, ChooseTimeGameActivity.class);
+=======
+	public void onSubmit(View v) {				
+    	Intent intent = new Intent(this, LevelActivity.class);
+>>>>>>> master
     	startActivity(intent);
 	}
 	

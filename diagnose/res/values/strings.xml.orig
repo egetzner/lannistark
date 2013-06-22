@@ -18,8 +18,11 @@
     <string name="fragment_game_toast_no_diagnose">this is not a minimal diagnose</string>
     <string name="title_activity_list_level">ListLevelActivity</string>
     <string name="text_level">Level #</string>
+<<<<<<< HEAD
     <string name="title_activity_choose_time_game">ChooseTimeGameActivity</string>
 
+=======
+    
     <string name="solve_or_skip">Solve or Skip</string>
     <string name="solve_text">asdf</string>
     <string name="alert_dialog_ok">OK</string>
@@ -27,4 +30,5 @@
     <string name="btn_clear">Clear Database</string>
     
     
+>>>>>>> master
 </resources>
