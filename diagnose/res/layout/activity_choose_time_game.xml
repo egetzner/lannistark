@@ -1,0 +1,63 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@android:color/background_dark"
+    tools:context=".ChooseTimeGameActivity" >
+
+    <!-- caption -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
+   	    <TextView
+   	        android:id="@+id/text_caption"
+   	        style="@style/text.white.large.bold"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:gravity="center"
+	        android:text="TIME ATTACK" />    
+    </RelativeLayout>
+    
+    <!-- content -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        
+        <!-- difficulty -->
+	    <RelativeLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginTop="@dimen/activity_vertical_margin">
+        	<TextView
+	   	        android:id="@+id/text_level_caption"
+	   	        style="@style/text.white"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content" 
+		        android:layout_alignParentLeft="true"
+		        android:text="Difficulty:"/>
+        	<TextView
+	   	        android:id="@+id/text_level"
+	   	        style="@style/text.green"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content" 
+		        android:layout_toRightOf="@+id/text_level_caption"
+		        android:layout_marginLeft="5dp"
+		        android:text="easy"/>       	    
+        </RelativeLayout>
+   
+		<!-- fragment -->
+	    <RelativeLayout 
+	        android:id="@+id/fragment_container"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content" 
+	        android:layout_marginTop="@dimen/activity_vertical_margin"
+	        android:background="@android:color/background_light"/>
+	</LinearLayout>
+</LinearLayout>

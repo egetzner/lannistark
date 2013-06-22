@@ -18,5 +18,6 @@
     <string name="fragment_game_toast_no_diagnose">this is not a minimal diagnose</string>
     <string name="title_activity_list_level">ListLevelActivity</string>
     <string name="text_level">Level #</string>
-    
+    <string name="title_activity_choose_time_game">ChooseTimeGameActivity</string>
+
 </resources>
