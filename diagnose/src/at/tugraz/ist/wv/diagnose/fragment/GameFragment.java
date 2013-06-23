@@ -133,7 +133,13 @@ public class GameFragment extends Fragment {
         GridView constraintsGrid = (GridView) layout.findViewById(R.id.gridview_constraints);
         
         if (level.isComplete())
+        {
         	constraintAdapter = new ConstraintAdapter(getActivity(),new HashSet<Constraint>(), true);
+        	
+        	//constraintsGrid.setVisibility(View.INVISIBLE);
+            View diag = (View) layout.findViewById(R.id.diagnose_control);
+            diag.setVisibility(View.GONE);
+        }
         else
         	constraintAdapter = new ConstraintAdapter(getActivity(), level.getAvailableConstraints(), true);
         constraintsGrid.setAdapter(constraintAdapter);

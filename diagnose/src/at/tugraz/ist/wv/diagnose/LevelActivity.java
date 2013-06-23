@@ -38,11 +38,8 @@ public class LevelActivity extends FragmentActivity implements OnGameCompletedLi
 		
 		//prepare game fragment
 		manager = new LevelManager();
-		gameLevel = manager.getNewLevel();
-		
-		proxy.addNewLevel(gameLevel);
-		proxy.dumpTables();
-
+		// = manager.getNewLevel();
+				
 		level = (TextView) findViewById(R.id.text_level);
 	
 		points = (TextView) findViewById(R.id.text_points);
@@ -91,15 +88,18 @@ public class LevelActivity extends FragmentActivity implements OnGameCompletedLi
 			}
 		});
 		
-		
-		changeLevel(gameLevel);
+		//proxy.addNewLevel(gameLevel);
+		proxy.dumpTables();
+
+		gameLevel = null;
+		goToLevel(1);
 
 	}
 		
 	private void goToLevel(int i) {
-		proxy.updateLevel(gameLevel);
+		if (gameLevel != null)
+			proxy.updateLevel(gameLevel);
 		
-		System.out.println("num: " + gameLevel.getLevelNum());
 		GameLevel level = proxy.getLevel(i);
 		
 		if (level == null)
