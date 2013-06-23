@@ -188,8 +188,8 @@ public class DBProxy {
 				new String[] { 
 						DBContract.TimeLevel._ID, 
 						},
-				DBContract.TimeLevel.COL_DIFF+"=?",
-				new String[] { String.valueOf(difficulty_level) },
+				DBContract.TimeLevel.COL_DIFF + " = ? AND " + DBContract.TimeLevel.COL_SECONDS + " = ?",
+				new String[] { String.valueOf(difficulty_level), String.valueOf(numSeconds) },
 				null, null, null, null);
 
 		int id = -1;
