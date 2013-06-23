@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import at.tugraz.ist.wv.diagnose.R;
 import at.tugraz.ist.wv.diagnose.abstraction.Difficulty;
@@ -51,13 +52,13 @@ public class ChooseTimeFragment extends Fragment implements OnClickListener{
         textviewHighscoreLong    = (TextView) layout.findViewById(R.id.text_highscore_long);
 
         //bind onClick listeners for time items
-        layout.findViewById(R.id.layout_time_short).setOnClickListener(new OnItemClickedListener(0));
-        layout.findViewById(R.id.layout_time_normal).setOnClickListener(new OnItemClickedListener(1));
-        layout.findViewById(R.id.layout_time_lengthy).setOnClickListener(new OnItemClickedListener(2));
-        layout.findViewById(R.id.layout_time_long).setOnClickListener(new OnItemClickedListener(3));
+        layout.findViewById(R.id.text_label_time_short).setOnClickListener(new OnItemClickedListener(0));
+        layout.findViewById(R.id.text_label_time_normal).setOnClickListener(new OnItemClickedListener(1));
+        layout.findViewById(R.id.text_label_time_lengthy).setOnClickListener(new OnItemClickedListener(2));
+        layout.findViewById(R.id.text_label_time_long).setOnClickListener(new OnItemClickedListener(3));
         
         //bind onClick listener for difficulty labels
-        layout.findViewById(R.id.layout_difficulty).setOnClickListener(this);
+        layout.findViewById(R.id.text_label_difficulty).setOnClickListener(this);
         
         //show difficulty
         textviewDifficulty = (TextView) layout.findViewById(R.id.text_difficulty);

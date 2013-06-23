@@ -4,7 +4,7 @@
     <string name="app_name">Diagnose</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
-    <string name="welcome">Welcome to the Hitting Set Game! Chosse a Mode: </string>
+    <string name="welcome">Welcome to the Hitting Set Game! Choose a Mode: </string>
     <string name="btn_findmode">Find all Diagnoses</string>
     <string name="btn_timemode">Play for Time</string>
     <string name="title_activity_level">LevelActivity</string>
