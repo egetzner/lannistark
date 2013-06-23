@@ -56,15 +56,15 @@ public class TimeGameActivity extends FragmentActivity implements OnGameComplete
 		//get information from bundle
 		difficulty = Difficulty.getDifficulty(getIntent().getExtras().getInt(ChooseTimeGameActivity.EXTRA_DIFFICULTY_INDEX));
 		timeId = getIntent().getExtras().getInt(ChooseTimeGameActivity.EXTRA_TIME_INDEX);
-		
-		//initialize level Manager
-		manager = new LevelManager();
-		manager.setDifficulty(difficulty);
-		
+				
 		//set record and current completed information for this game mode
 		dbProxy = new DBProxy(this);
 		record = dbProxy.getRecordForTiming(difficulty.getIndex(), timeId);
 		completed = 0;
+		
+		//initialize level Manager
+		manager = new LevelManager(LevelActivity.MAX_LEVELS,dbProxy);
+		manager.setDifficulty(difficulty);
 		
 		//bind views
 		level = (TextView) findViewById(R.id.text_level);

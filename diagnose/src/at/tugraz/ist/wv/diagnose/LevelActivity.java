@@ -19,6 +19,8 @@ import at.tugraz.ist.wv.diagnose.fragment.GameFragment.OnGameCompletedListener;
 
 public class LevelActivity extends FragmentActivity implements OnGameCompletedListener {
 
+	public static final int MAX_LEVELS = 20;
+	
 	TextView level;
 	TextView points;
 	View solve;
@@ -37,8 +39,10 @@ public class LevelActivity extends FragmentActivity implements OnGameCompletedLi
 		proxy = new DBProxy(this);
 		
 		//prepare game fragment
-		manager = new LevelManager();
-		// = manager.getNewLevel();
+
+		//TODO: temporary solution
+		proxy.clearDB();
+		manager = new LevelManager(MAX_LEVELS,proxy);
 				
 		level = (TextView) findViewById(R.id.text_level);
 	
@@ -105,6 +109,8 @@ public class LevelActivity extends FragmentActivity implements OnGameCompletedLi
 		if (level == null)
 		{
 			level = manager.getNewLevel(i);
+			if (level == null)
+				return;
 			proxy.addNewLevel(level);
 		}
 		

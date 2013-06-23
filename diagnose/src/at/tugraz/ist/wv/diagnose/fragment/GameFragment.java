@@ -48,7 +48,8 @@ public class GameFragment extends Fragment {
 	
 	//activity interfaces
     OnGameCompletedListener onGameCompletedListener;
-    GametypeTimingBasicInformationSupplier gametypeTimingBasicInformationSupplier; 
+    GametypeTimingBasicInformationSupplier gametypeTimingBasicInformationSupplier;
+	private View diagControl; 
     
 	//callback listener for activities
     public interface OnGameCompletedListener {
@@ -131,14 +132,14 @@ public class GameFragment extends Fragment {
         
         //create constraints grid
         GridView constraintsGrid = (GridView) layout.findViewById(R.id.gridview_constraints);
-        
+        diagControl = (View) layout.findViewById(R.id.diagnose_control);
+
         if (level.isComplete())
         {
         	constraintAdapter = new ConstraintAdapter(getActivity(),new HashSet<Constraint>(), true);
         	
         	//constraintsGrid.setVisibility(View.INVISIBLE);
-            View diag = (View) layout.findViewById(R.id.diagnose_control);
-            diag.setVisibility(View.GONE);
+            diagControl.setVisibility(View.GONE);
         }
         else
         	constraintAdapter = new ConstraintAdapter(getActivity(), level.getAvailableConstraints(), true);
@@ -232,6 +233,9 @@ public class GameFragment extends Fragment {
     {
     	diagnoseAdapter.clear();
     	constraintAdapter.clear();
+    	
+        diagControl.setVisibility(View.GONE);
+    	
 		onGameCompletedListener.onGameCompleted(solve);
     }
     
