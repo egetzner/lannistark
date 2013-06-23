@@ -99,6 +99,16 @@ public class DBProxy {
 		System.out.println(DatabaseUtils.dumpCursorToString(cursor));
 		cursor.close();
 		
+		cursor = db.query(
+				DBContract.TimeLevel.TABLE_NAME, 
+				new String[] {  },
+				null,
+				new String[] {},
+				null, null, null, null);
+		
+		System.out.println(DatabaseUtils.dumpCursorToString(cursor));
+		cursor.close();
+		
 		closeReadableDatabase();
 		//dbHelper.close();
 	}
@@ -219,33 +229,55 @@ public class DBProxy {
 		Cursor cursor = db.query(
 				DBContract.TimeLevel.TABLE_NAME, 
 				new String[] { 
+						DBContract.TimeLevel.COL_SECONDS,
 						DBContract.TimeLevel.COL_NUM_LEVELS, 
-						DBContract.TimeLevel.COL_SECONDS
 						},
 				DBContract.TimeLevel.COL_DIFF+"=?",
 				new String[] { String.valueOf(difficulty_level) },
-				null, null, null, null);
+				null, null, String.valueOf(DBContract.TimeLevel.COL_SECONDS), null);
 				
-		int[] score = new int[2];
+		//initialize score array
+		int[] score = new int[4];
+		for(int i = 0; i < score.length; i++)
+			score[i] = 0;
 		
 		if (cursor != null)
 		{
-			//move to the last possible entry
-			if (cursor.moveToLast())
-			{
-				score[0] = cursor.getInt(0);
-				score[1] = cursor.getInt(1);
-			}
-			
+			if (cursor.moveToFirst())
+				do {
+					score[cursor.getInt(0)] = cursor.getInt(1);
+				} while(cursor.moveToNext());
 			cursor.close();
 		}
 		else
-			System.out.println("cursor is null!");
-
-		//dbHelper.close();
+			System.out.println("cursor is null or empty!");
 
 		closeReadableDatabase();
 	    return score;
+	}
+	
+	public int getRecordForTiming(int difficulty_level, int time_id)
+	{
+		SQLiteDatabase db = this.getReadableDatabase();    
+	    
+		Cursor cursor = db.query(
+				DBContract.TimeLevel.TABLE_NAME, 
+				new String[] { 
+						DBContract.TimeLevel.COL_NUM_LEVELS, 
+						},
+				DBContract.TimeLevel.COL_DIFF + " = ? AND " + DBContract.TimeLevel.COL_SECONDS + " = ? " ,
+				new String[] { String.valueOf(difficulty_level), String.valueOf(time_id) },
+				null, null, null, null);
+				
+		int retval = 0;
+		if (cursor != null) {
+			if (cursor.moveToFirst())
+				retval = cursor.getInt(0);
+			cursor.close();
+		}
+
+		closeReadableDatabase();
+	    return retval;
 	}
 
 	public void clearDB() {

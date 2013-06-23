@@ -157,6 +157,10 @@ public class LevelActivity extends FragmentActivity implements OnGameCompletedLi
 
 	}
 	
+	public void finishActivity(View view) {
+		finish();
+	}
+	
 	private void showEndGameDialog()
 	{
 		

@@ -34,18 +34,9 @@
 	        android:layout_toRightOf="@+id/icon_navigation_back"
 	        android:layout_marginLeft="20dp"
 	        android:layout_centerVertical="true" />    
-	        
-   	    <ImageView
-	        android:id="@+id/icon_progress"
-	        android:contentDescription="@string/app_name"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_alignParentRight="true"
-	        android:layout_centerVertical="true"
-	        android:src="@drawable/progress_new" />
 
    	    <TextView
-   	        android:id="@+id/text_points"
+   	        android:id="@+id/text_time"
    	        style="@style/text.white.bold"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
@@ -90,20 +81,9 @@
 	        android:contentDescription="@string/app_name"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:layout_toRightOf="@+id/text_solve2"
+	        android:layout_toRightOf="@+id/icon_navigation_refresh"
 	        android:layout_marginLeft="20dp"
 	        android:src="@drawable/navigation_next_item" />
-
-        <Button
-            android:id="@+id/text_solve2"
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/icon_navigation_next_item"
-            android:layout_alignParentTop="true"
-            android:layout_marginLeft="26dp"
-            android:layout_toRightOf="@+id/icon_navigation_refresh"
-            android:text="Solve!" />
 
     </RelativeLayout>
 

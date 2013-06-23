@@ -163,6 +163,29 @@ public class LevelManager {
 		this.numPossibleDiags += numPossibleDiags;
 	}
 
+	public void setDifficulty(Difficulty difficulty) {
+		switch(difficulty.getIndex()) {
+		case 0: //easy
+			numColoursInDiags = 1;
+			numConstraints = 2;
+			maxCardinality = 2;
+			minCardinality = 1;	
+			break;
+		case 1: //medium
+			numColoursInDiags = 2;
+			numConstraints = 3;
+			maxCardinality = 3;
+			minCardinality = 2;	
+			break;
+		case 2: //hard
+			numColoursInDiags = 3;
+			numConstraints = 4;
+			maxCardinality = 4;
+			minCardinality = 3;	
+			break;
+		}
+	}
+
 
 
 }

@@ -8,7 +8,7 @@ public class DBOpenHelper extends SQLiteOpenHelper{
 
 	// All Static variables
 	// Database Version
-	private static final int DATABASE_VERSION = 6;
+	private static final int DATABASE_VERSION = 7;
 
 	// Database Name
 	private static final String DATABASE_NAME = "mhs";

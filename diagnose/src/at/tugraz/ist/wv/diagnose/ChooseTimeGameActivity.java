@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NavUtils;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.os.Build;
 import at.tugraz.ist.wv.diagnose.abstraction.Difficulty;
 import at.tugraz.ist.wv.diagnose.fragment.ChooseDifficultyFragment;
@@ -20,6 +21,8 @@ import at.tugraz.ist.wv.diagnose.fragment.ChooseTimeFragment.OnTimeChosenListene
 public class ChooseTimeGameActivity extends FragmentActivity implements OnTimeChosenListener, OnDifficultyTappedListener, OnDifficultyChosenListener {
 
 	public static final String CHOOSETIMEGAMEACTIVITY_KEY_DIFFICULTY = "DIFFICULTY";
+	public static final String EXTRA_DIFFICULTY_INDEX = "DIFFICULTY_INDEX";
+	public static final String EXTRA_TIME_INDEX = "TIME_INDEX";
 	
 	private Difficulty difficulty;
 	
@@ -48,6 +51,12 @@ public class ChooseTimeGameActivity extends FragmentActivity implements OnTimeCh
 	@Override
 	public void onTimeChosen(int time) {
 		System.out.println("started game from view with time identifier " + time);
+		
+    	Intent intent = new Intent(this, TimeGameActivity.class);
+    	intent.putExtra(EXTRA_DIFFICULTY_INDEX, difficulty.getIndex());
+    	intent.putExtra(EXTRA_TIME_INDEX, time);
+    	
+    	startActivity(intent);
 	}
 	
 	@Override

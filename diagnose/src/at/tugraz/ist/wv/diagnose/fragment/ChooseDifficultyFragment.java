@@ -7,12 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.TextView;
-import at.tugraz.ist.wv.diagnose.ChooseTimeGameActivity;
 import at.tugraz.ist.wv.diagnose.R;
 import at.tugraz.ist.wv.diagnose.abstraction.Difficulty;
-import at.tugraz.ist.wv.diagnose.fragment.ChooseTimeFragment.OnDifficultyTappedListener;
-import at.tugraz.ist.wv.diagnose.fragment.ChooseTimeFragment.OnTimeChosenListener;
 
 public class ChooseDifficultyFragment extends Fragment {
 

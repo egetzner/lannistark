@@ -45,6 +45,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="at.tugraz.ist.wv.diagnose.MainActivity" />
         </activity>
+        <activity
+            android:name="at.tugraz.ist.wv.diagnose.TimeGameActivity"
+            android:label="@string/title_activity_time_game"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+            android:parentActivityName="at.tugraz.ist.wv.diagnose.ChooseTimeGameActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="at.tugraz.ist.wv.diagnose.ChooseTimeGameActivity" />
+        </activity>
     </application>
 
 </manifest>

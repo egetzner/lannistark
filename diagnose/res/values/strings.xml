@@ -19,12 +19,11 @@
     <string name="title_activity_list_level">ListLevelActivity</string>
     <string name="text_level">Level #</string>
     <string name="title_activity_choose_time_game">ChooseTimeGameActivity</string>
-
     <string name="solve_or_skip">Solve or Skip</string>
     <string name="solve_text">asdf</string>
     <string name="alert_dialog_ok">OK</string>
     <string name="alert_dialog_cancel">Cancel</string>
     <string name="btn_clear">Clear Database</string>
-    
-    
+    <string name="title_activity_time_game">TimeGameActivity</string>
+
 </resources>

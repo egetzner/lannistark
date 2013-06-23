@@ -2,7 +2,6 @@ package at.tugraz.ist.wv.diagnose.fragment;
 
 
 import android.app.Activity;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -10,14 +9,13 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import at.tugraz.ist.wv.diagnose.ChooseTimeGameActivity;
 import at.tugraz.ist.wv.diagnose.R;
 import at.tugraz.ist.wv.diagnose.abstraction.Difficulty;
+import at.tugraz.ist.wv.diagnose.db.DBProxy;
 
 public class ChooseTimeFragment extends Fragment implements OnClickListener{
 
 	//information
-	private Cursor highscoreCursor;
 	private Difficulty difficulty;
 	
 	//textviews
@@ -66,9 +64,6 @@ public class ChooseTimeFragment extends Fragment implements OnClickListener{
         textviewDifficulty.setText(difficulty.getText());
         textviewDifficulty.setTextColor(getResources().getColor(difficulty.getColor()));
         
-        //set highscoreCursor to null
-        highscoreCursor = null;
-        
         //return layout
         return layout;
     }
@@ -97,18 +92,17 @@ public class ChooseTimeFragment extends Fragment implements OnClickListener{
     @Override
     public void onStart() {
     	super.onStart();
-    	//TODO: get cursor and update highscore information
+    	//update highscore information
+    	DBProxy proxy = new DBProxy(getActivity());
+    	proxy.dumpTables();
+    	int[] scores = proxy.getScoreForTiming(difficulty.getIndex());
+        textviewHighscoreShort.setText(String.valueOf(scores[0]) + " completed");
+        textviewHighscoreNormal.setText(String.valueOf(scores[1]) + " completed");
+        textviewHighscoreLengthy.setText(String.valueOf(scores[2]) + " completed");
+        textviewHighscoreLong.setText(String.valueOf(scores[3]) + " completed");
+    	
     }
     
-    @Override
-    public void onStop() {
-    	if (highscoreCursor != null) {
-    		highscoreCursor.close();
-    		highscoreCursor = null;
-    	}
-    	super.onStop();
-    }
-
     public void initializeFragment(Difficulty difficulty) {
     	this.difficulty = difficulty;
     }
