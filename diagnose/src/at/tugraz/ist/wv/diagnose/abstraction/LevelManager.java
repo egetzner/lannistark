@@ -44,6 +44,12 @@ public class LevelManager {
 		createLevels(proxy);
 	}
 	
+	//constructor for timed games -> we do not want to overwrite the already created levels
+	public LevelManager() {
+		//creates new levels, check if we already have some!!
+		resetLevels();
+	}
+	
 	private void createLevels(DBProxy proxy) {
 		HashMap<Integer, GameLevel> levels = new HashMap<Integer, GameLevel>();
 				
