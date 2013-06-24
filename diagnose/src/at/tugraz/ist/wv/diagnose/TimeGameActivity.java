@@ -31,6 +31,7 @@ public class TimeGameActivity extends FragmentActivity implements OnGameComplete
 	//views
 	TextView level;
 	TextView time;
+	ImageView prev;
 	
 	//information
 	Difficulty difficulty;
@@ -41,12 +42,10 @@ public class TimeGameActivity extends FragmentActivity implements OnGameComplete
 	int record;
 	int seconds;
 		
-	
+	//game handling
 	GameLevel gameLevel;
 	GameFragment fragment;
-	//DBProxy proxy;
 	
-	ImageView prev;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +62,7 @@ public class TimeGameActivity extends FragmentActivity implements OnGameComplete
 		completed = 0;
 		
 		//initialize level Manager
-		manager = new LevelManager(LevelActivity.MAX_LEVELS,dbProxy);
+		manager = new LevelManager();
 		manager.setDifficulty(difficulty);
 		
 		//bind views
@@ -157,6 +156,7 @@ public class TimeGameActivity extends FragmentActivity implements OnGameComplete
 	}
 	
 	public void finishActivity(View view) {
+		timer.cancel();
 		finish();
 	}
 	

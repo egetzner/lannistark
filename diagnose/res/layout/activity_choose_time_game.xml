@@ -20,7 +20,7 @@
    	        style="@style/text.white.large.bold"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:gravity="center"
+	        android:layout_centerHorizontal="true"
 	        android:text="TIME ATTACK" />    
     </RelativeLayout>
     

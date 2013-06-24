@@ -6,44 +6,55 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:gravity="center_vertical"
     tools:context=".MainActivity" >
 
+    <ImageView 
+        android:id="@+id/image_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/title"
+        android:contentDescription="@string/app_name"
+        />
+    
     <TextView
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/image_title"
         android:layout_centerHorizontal="true"
+        android:layout_margin="20dp"
         android:text="@string/welcome" />
 
     <Button
         android:id="@+id/button2"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/textView1"
         android:layout_centerHorizontal="true"
-        android:layout_marginLeft="42dp"
-        android:layout_marginTop="48dp"
         android:onClick="onSubmit"
+        style="@style/button.big"
+        android:layout_margin="20dp"
         android:text="@string/btn_timemode" />
 
     <Button
         android:id="@+id/button1"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/button2"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="27dp"
         android:onClick="onBtnLevelList"
+        style="@style/button.big"
+        android:layout_margin="20dp"
         android:text="@string/btn_findmode" />
 
     <Button
         android:id="@+id/button3"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/button1"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="40dp"
         android:onClick="onBtnClearDB"
+        style="@style/button.big"
+        android:layout_margin="20dp"
         android:text="@string/btn_clear" />
 
 </RelativeLayout>

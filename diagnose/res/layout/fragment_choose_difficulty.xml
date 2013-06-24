@@ -11,31 +11,32 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
+        android:layout_gravity="center_horizontal"
         android:text="Choose a difficulty:"        
         
         />
     
-   	<TextView
+   	<Button
+	   	style="@style/button.big.green"
         android:id="@+id/text_label_difficulty_easy"
-        style="@style/text.green"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:text="easy"
     />        
    
-  	<TextView
+   	<Button
+	   	style="@style/button.big.yellow"
         android:id="@+id/text_label_difficulty_medium"
-        style="@style/text.yellow"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:text="medium"
     />   
 
-  	<TextView
+   	<Button
+	   	style="@style/button.big.red"
         android:id="@+id/text_label_difficulty_hard"
-        style="@style/text.red"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
