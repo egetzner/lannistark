@@ -57,12 +57,15 @@ public class LevelManager {
 		
 		int count = 0;
 
-		while (count++ < NUM_LEVELS+5)
+		while (count++ < NUM_LEVELS)
 		{
-			GameLevel lvl = this.getNewLevel();
+			GameLevel lvl = this.getNewLevelOrNull();
 			
 			if (lvl == null)
+			{
+				count--;
 				continue;
+			}
 						
 			int numDiags = lvl.getTargetDiagnoses().size();
 			int complexity = lvl.getComplexity();
@@ -189,7 +192,7 @@ public class LevelManager {
 	}
 	
 	
-	public GameLevel getNewLevel()
+	public GameLevel getNewLevelOrNull()
 	{
 		action = performAction();
 		List<Set<Constraint>> conflicts = ConflictCalculator.calculateConflictsNew(
@@ -206,7 +209,7 @@ public class LevelManager {
 	public GameLevel getNewLevel(int i) {
 
 		levelCounter = i;
-		return getNewLevel();
+		return getNewLevelOrNull();
 	}
 
 	public int getLevelCounter() {

@@ -31,6 +31,7 @@ public class LevelActivity extends FragmentActivity implements OnGameCompletedLi
 	DBProxy proxy;
 	
 	ImageView prev;
+	ImageView next;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +52,7 @@ public class LevelActivity extends FragmentActivity implements OnGameCompletedLi
 		points.setText("Points: " + manager.getNumCorrectDiags() + "/" + manager.getNumPossibleDiags());
 
 		
-		ImageView next = (ImageView) findViewById(R.id.icon_navigation_next_item);
+		next = (ImageView) findViewById(R.id.icon_navigation_next_item);
 				
 		next.setOnClickListener(new OnClickListener() {
 			
@@ -126,6 +127,11 @@ public class LevelActivity extends FragmentActivity implements OnGameCompletedLi
 		else
 			prev.setClickable(true);
 		
+		if (gameLevel.getLevelNum() >= LevelActivity.MAX_LEVELS)
+			next.setClickable(false);
+		else
+			next.setClickable(true);
+		
 		solve.setEnabled(!gameLevel.isComplete());
 		
 		fragment = GameFragment.newInstance(gameLevel, GameFragment.GAMETYPE_LEVEL_COMPLETION);
@@ -156,18 +162,60 @@ public class LevelActivity extends FragmentActivity implements OnGameCompletedLi
 		points.setText("Points: " + manager.getNumCorrectDiags() + "/" + manager.getNumPossibleDiags());	
 		
 		//TODO: what if clicked on solve?
-		if (!solvePressed)
-			showEndGameDialog();
+		if (!solvePressed && gameLevel.getLevelNum() < MAX_LEVELS)
+			showLevelEndDialog();
+		
+		if (gameLevel.getLevelNum() >= MAX_LEVELS)
+			showEndOfGameDialog();
 		
 		solve.setEnabled(false);
+		
+	
 
 	}
-	
+
+
 	public void finishActivity(View view) {
 		finish();
 	}
 	
-	private void showEndGameDialog()
+	
+	private void showEndOfGameDialog() {
+		// TODO Auto-generated method stub
+		String header = "Game Over!";
+		String message = "You guessed " + manager.getNumCorrectDiags() +" of "+ manager.getNumPossibleDiags()+" possible Diagnoses.";
+		AlertDialog dialog = AlertDialogManager.showAlertDialog(
+				this, 
+				header,
+				message
+				);
+		
+
+		dialog.setButton(AlertDialog.BUTTON_POSITIVE, 
+				"Go To Menu", 
+				new AlertDialog.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+			        	   onBackPressed();
+					}
+				});
+		
+		dialog.setButton(AlertDialog.BUTTON_NEUTRAL, 
+				"Back To Game",
+				new AlertDialog.OnClickListener() {
+			
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						System.out.println("backToGame");
+					}
+				});	
+
+		dialog.show();
+
+	}
+	
+	private void showLevelEndDialog()
 	{
 		
 		String header = "Congratulations!";
