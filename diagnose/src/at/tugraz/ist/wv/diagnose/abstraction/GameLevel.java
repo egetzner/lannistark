@@ -62,7 +62,7 @@ public class GameLevel {
 			availableConstraints.addAll(temp);
 
 		//initialize gamestate
-		numTries = 0;
+		numTries = tries;
 		currentDiagnoses = new ConstraintSuperSet(diagnoses);
 
 	}

@@ -76,7 +76,7 @@ public class TimeGameActivity extends FragmentActivity implements OnGameComplete
 			
 			@Override
 			public void onClick(View v) {
-				changeLevel(manager.getNewLevel());
+				changeLevel(manager.getNewLevelOrNull());
 			}
 		});
 		
@@ -91,7 +91,7 @@ public class TimeGameActivity extends FragmentActivity implements OnGameComplete
 		refresh.setImageDrawable(getResources().getDrawable(R.drawable.navigation_refresh_disabled));
 		
 		//prepare fragment
-		gameLevel = manager.getNewLevel();
+		gameLevel = manager.getNewLevelOrNull();
 		changeLevel(gameLevel);
 		
 		//start timer
@@ -142,7 +142,7 @@ public class TimeGameActivity extends FragmentActivity implements OnGameComplete
 	
 	public void onGameCompleted(boolean solvePressed) {
 		completed++;
-		gameLevel = manager.getNewLevel();
+		gameLevel = manager.getNewLevelOrNull();
 		changeLevel(gameLevel);
 	}
 	

@@ -217,7 +217,11 @@ public class GameFragment extends Fragment {
     private void updateTextInformation() {
     	textviewDiagnoses.setText(level.getCurrentDiagnoses(	).size() + "/" + level.getTargetDiagnoses().size());
     	if (gametype == GAMETYPE_LEVEL_COMPLETION) {
-	    	textviewTries.setText(String.valueOf(level.getNumTries()));
+    		if (level.isComplete())
+    	    	textviewTries.setText("-");
+    		else
+    	    	textviewTries.setText(String.valueOf(level.getNumTries()));
+
 	    	if (level.getNumTriesBest() == 0)
 	    		textviewBest.setText("-");
 	    	else
