@@ -41,7 +41,10 @@ public class LevelManager {
 		
 		//creates new levels, check if we already have some!!
 		resetLevels();
-		createLevels(proxy);
+		
+		if (proxy.getLevel(0) == null)
+			createLevels(proxy);
+		//otherwise, levels exists already.
 	}
 	
 	//constructor for timed games -> we do not want to overwrite the already created levels
@@ -59,7 +62,7 @@ public class LevelManager {
 
 		while (count++ < NUM_LEVELS)
 		{
-			GameLevel lvl = this.getNewLevelOrNull();
+			GameLevel lvl = this.getNewLevel();
 			
 			if (lvl == null)
 			{
@@ -192,14 +195,18 @@ public class LevelManager {
 	}
 	
 	
-	public GameLevel getNewLevelOrNull()
+	public GameLevel getNewLevel()
 	{
 		action = performAction();
 		List<Set<Constraint>> conflicts = ConflictCalculator.calculateConflictsNew(
 				numColoursInDiags, numConstraints, minCardinality, maxCardinality);
 		
-		if (conflicts == null)
-			return null;
+		while (conflicts == null || conflicts.isEmpty())
+		{
+			action = performAction();
+			conflicts = ConflictCalculator.calculateConflictsNew(
+					numColoursInDiags, numConstraints, minCardinality, maxCardinality);
+		}
 		
 		return new GameLevel(levelCounter++, conflicts);
 	}
@@ -209,7 +216,7 @@ public class LevelManager {
 	public GameLevel getNewLevel(int i) {
 
 		levelCounter = i;
-		return getNewLevelOrNull();
+		return getNewLevel();
 	}
 
 	public int getLevelCounter() {

@@ -41,8 +41,6 @@ public class LevelActivity extends FragmentActivity implements OnGameCompletedLi
 		
 		//prepare game fragment
 
-		//TODO: temporary solution
-		proxy.clearDB();
 		manager = new LevelManager(MAX_LEVELS,proxy);
 				
 		level = (TextView) findViewById(R.id.text_level);
