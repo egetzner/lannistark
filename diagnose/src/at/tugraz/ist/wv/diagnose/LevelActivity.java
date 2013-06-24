@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import at.tugraz.ist.wv.diagnose.abstraction.GameLevel;
@@ -23,7 +24,7 @@ public class LevelActivity extends FragmentActivity implements OnGameCompletedLi
 	
 	TextView level;
 	TextView points;
-	View solve;
+	Button solve;
 	LevelManager manager;
 	GameLevel gameLevel;
 	GameFragment fragment;
@@ -70,8 +71,7 @@ public class LevelActivity extends FragmentActivity implements OnGameCompletedLi
 			}
 		});
 		
-		ImageView refresh = (ImageView) findViewById(R.id.icon_navigation_refresh);
-		refresh.setOnClickListener(new OnClickListener() {
+		findViewById(R.id.icon_navigation_refresh).setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
@@ -82,7 +82,7 @@ public class LevelActivity extends FragmentActivity implements OnGameCompletedLi
 		});		
 		
 		
-		solve = findViewById(R.id.text_solve2);
+		solve = (Button) findViewById(R.id.text_solve2);
 		solve.setOnClickListener(new OnClickListener() {
 			
 			@Override
