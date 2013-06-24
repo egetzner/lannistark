@@ -76,14 +76,24 @@
 	        android:layout_height="wrap_content"
 	        android:src="@drawable/navigation_previous_item" />
         
-        <ImageView
+        <Button
+            style="@style/button.small"
 	        android:id="@+id/icon_navigation_refresh"
 	        android:contentDescription="@string/app_name"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:layout_toRightOf="@+id/icon_navigation_previous_item"
 	        android:layout_marginLeft="20dp"
-	        android:src="@drawable/navigation_refresh" />
+	        android:layout_toRightOf="@+id/icon_navigation_previous_item"
+	        android:text="reset" />
+    
+        <Button
+            style="@style/button.small"
+            android:id="@+id/text_solve2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_toRightOf="@+id/icon_navigation_refresh"
+            android:text="solve" />
         
         <ImageView
 	        android:id="@+id/icon_navigation_next_item"
@@ -94,16 +104,7 @@
 	        android:layout_marginLeft="20dp"
 	        android:src="@drawable/navigation_next_item" />
 
-        <Button
-            android:id="@+id/text_solve2"
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/icon_navigation_next_item"
-            android:layout_alignParentTop="true"
-            android:layout_marginLeft="26dp"
-            android:layout_toRightOf="@+id/icon_navigation_refresh"
-            android:text="Solve!" />
+
 
     </RelativeLayout>
 
