@@ -17,6 +17,8 @@ public class GameLevel {
 	private Set<Set<Constraint>> targetDiagnoses;
 	private Set<Constraint> availableConstraints;
 	
+	private int complexity = 0; //made out of conflict size and the individual size of the conflicts
+	
 	//gamestate
 	private int numTries;
 	private ConstraintSuperSet currentDiagnoses;
@@ -72,6 +74,10 @@ public class GameLevel {
 		return levelNum;
 	}
 	
+	public void setLevelNum(int num) {
+		levelNum = num;
+	}
+	
 	public int getNumTriesBest() {
 		return numTriesBest;
 	}
@@ -118,6 +124,20 @@ public class GameLevel {
 
 	public boolean isComplete() {
 		return (currentDiagnoses.size() == targetDiagnoses.size());
+	}
+	
+	public int getComplexity() {
+		if (complexity == 0)
+		{			
+			System.out.println("conflicts: " + conflicts);
+			
+			for (Set<Constraint> element : conflicts)
+			{
+				complexity += element.size();
+			}		
+		}
+		
+		return complexity;
 	}
 
 	public void reset() {

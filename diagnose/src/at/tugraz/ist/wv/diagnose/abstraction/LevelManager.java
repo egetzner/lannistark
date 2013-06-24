@@ -1,8 +1,12 @@
 package at.tugraz.ist.wv.diagnose.abstraction;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import at.tugraz.ist.wv.diagnose.db.DBProxy;
 import at.tugraz.ist.wv.diagnose.processing.ConflictCalculator;
 
 public class LevelManager {
@@ -33,10 +37,64 @@ public class LevelManager {
 		action = Action.start;
 	}
 
-	public LevelManager() {
+	public LevelManager(int maxLevels, DBProxy proxy) {
+		
+		//creates new levels, check if we already have some!!
 		resetLevels();
+		createLevels(proxy);
 	}
 	
+	private void createLevels(DBProxy proxy) {
+		HashMap<Integer, GameLevel> levels = new HashMap<Integer, GameLevel>();
+				
+		int NUM_LEVELS = 20;
+		
+		int count = 0;
+
+		while (count++ < NUM_LEVELS+5)
+		{
+			GameLevel lvl = this.getNewLevel();
+			
+			if (lvl == null)
+				continue;
+						
+			int numDiags = lvl.getTargetDiagnoses().size();
+			int complexity = lvl.getComplexity();
+
+/*			System.err.println("num Diags: " + numDiags + ", " + complexity);
+			System.err.println(lvl.getConflicts());
+			System.err.println(lvl.getTargetDiagnoses());
+*/
+			int complex = (complexity)*(numDiags);
+			
+			//the higher the level, the more important it is to have a low number of diagnoses.
+			GameLevel level = levels.get(complex);
+			
+			if (level == null)
+				levels.put(complex, lvl);
+			else
+				count--;
+			//else conflict!! create new level!!
+			
+			
+		}
+
+		LinkedList<Integer> complexities = new LinkedList<Integer>(levels.keySet());
+		
+		Collections.sort(complexities);
+		
+		levelCounter = 1;
+		for (int comp : complexities)
+		{
+			GameLevel lvl = levels.get(comp);
+			lvl.setLevelNum(levelCounter++);
+			System.err.println(lvl.getLevelNum() + " " + comp + "(" + lvl.getComplexity() + " * " + lvl.getTargetDiagnoses().size()+") , value: " + lvl.getConflicts());
+			proxy.addNewLevel(lvl);
+		}
+
+		
+	}
+
 	//counters for display
 	private int levelCounter;
 	private int numCorrectDiags;
@@ -50,85 +108,95 @@ public class LevelManager {
 	private int minCardinality;
 	
 	private Action action;
-	
-	private Action increaseCols()
-	{
-		System.out.println("incCol");
+	private int constraintCounter = 0;
+	int MAX_CARD_MAX = 5;
 
+	private Action increaseNumColours()
+	{
 		numColoursInDiags++;
-		numConstraints = (numColoursInDiags<3)?3:numColoursInDiags;
-		maxCardinality = 2;
-		minCardinality = 1;
 		return Action.incCard;
 	}
 	
+	
 	private Action increaseCount()
 	{
-		System.out.println("incCount");
+		System.out.println("INCREASE COUNT CALLED");
+		constraintCounter = 0;
+		numConstraints++;
 
-		float max_num = (numColoursInDiags*2)-(numColoursInDiags/2);
-		//increases the number of conflicts, if we aren't already over the limit.
-		
-		if (numColoursInDiags == 2) max_num += 1;
-		
-		if (numConstraints < max_num)
+		if (numConstraints > 3)
 		{
-			numConstraints++;
-			return Action.incCard;
+			maxCardinality = 3;
+			minCardinality = 2;
 		}
 		else
 		{
-			return increaseCardinality();
+			maxCardinality = 2;
+			minCardinality = 1;
 		}
+		numColoursInDiags = numConstraints-2;
+		
+		return Action.incCard;
 	}
 	
 	private Action increaseCardinality()
 	{
-		System.out.println("incCard");
-		float max_num = (numColoursInDiags*2)-(numColoursInDiags/2);
-
-		if (maxCardinality < max_num)
+		
+		if (maxCardinality < MAX_CARD_MAX)
 		{
 			maxCardinality++;
 		}
-		else if (minCardinality < maxCardinality && minCardinality < numColoursInDiags)
+		else if (minCardinality < maxCardinality)
+		{
 			minCardinality++;
+		}
 		else
-			return Action.incCol;
+			return Action.incCount;
+		
+		if (constraintCounter > numConstraints)
+		{
+			return Action.incCount;
+		}
+		//if we simply increased the Cardinality, we should increase the colour count. 
+		return increaseNumColours();
 			
-		return Action.incCount;
-	}
+		}
+
+
 	
-	private Action getNext() {
+	private Action performAction() {
+
+		constraintCounter++;
+		
 		switch (action)
 		{
 		case start:
 			return Action.incCol;
-		case incCol:
-			return increaseCols();
-		case incCount:
-			return increaseCount();
 		case incCard:
 			return increaseCardinality();
-			
+		case incCol:
+			return increaseNumColours();
+		case incCount:
+			return increaseCount();
 		}
 		return Action.start;
-	}	
+	}
+	
 	
 	public GameLevel getNewLevel()
 	{
-		Action old = action;
+		action = performAction();
+		List<Set<Constraint>> conflicts = ConflictCalculator.calculateConflictsNew(
+				numColoursInDiags, numConstraints, minCardinality, maxCardinality);
 		
-		action = getNext();
-		
-		System.out.println(old +" --> " + action);
-		
-		List<Set<Constraint>> conflicts = ConflictCalculator.calculateConflicts(
-					numColoursInDiags, numConstraints, minCardinality, maxCardinality);
+		if (conflicts == null)
+			return null;
 		
 		return new GameLevel(levelCounter++, conflicts);
 	}
 	
+
+
 	public GameLevel getNewLevel(int i) {
 
 		levelCounter = i;
